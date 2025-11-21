@@ -275,20 +275,33 @@ public class JustCad extends javax.swing.JFrame {
             if (Motivo.isEmpty() || Desc.isEmpty() || Qtd.isEmpty() || Motivo.equals("Insira o motivo") || Desc.equals("Insira a descrição") || Qtd.equals("Insira a quantidade de pontos")) {
                 JOptionPane.showMessageDialog(rootPane, "Todos os campos devem ser preenchidos!");
                 return;
+            } else if (Motivo.length() > 20) {
+                JOptionPane.showMessageDialog(rootPane, "O motivo deve ter no máximo 20 caracteres");
+                return;
+            } else if (Desc.length() > 30) {
+                JOptionPane.showMessageDialog(rootPane, "A descrição deve ter no máximo 30 caracteres");
+                return;
             }
             double qtd;
+
             try {
                 qtd = Double.parseDouble(Qtd);
             } catch (NumberFormatException nfe) {
                 JOptionPane.showMessageDialog(rootPane, "O campo Quantidade deve ser um numero valido!");
                 return;
             }
+            if (qtd == 0) {
+                JOptionPane.showMessageDialog(rootPane, "A quantidade de pontos não pode ser 0");
+                return;
+            }
 
             ConJustificativa conJust = new ConJustificativa();
-            conJust.CadastrarJust(Desc, Motivo, qtd, Status);
+            Boolean confirm = conJust.CadastrarJust(Desc, Motivo, qtd, Status);
+            if (confirm) {
+                JOptionPane.showMessageDialog(rootPane, "Registro Cadastrado com Sucesso!!");
+                listar();
+            }
 
-            JOptionPane.showMessageDialog(rootPane, "Registro Cadastrado com Sucesso!!");
-            listar();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex.getMessage());
         }
@@ -297,25 +310,23 @@ public class JustCad extends javax.swing.JFrame {
     private void excluirTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_excluirTActionPerformed
         try {
             int id = Integer.parseInt(txtTurma.getText());
-            
-            if(id == 1 || id == 7){
-              JOptionPane.showMessageDialog(rootPane, "Não é possivel excluir justificativa 'Novo Aluno'/'Outro'");
-            }
-            else{
-            
-            int op = JOptionPane.showConfirmDialog(rootPane, "Deseja realmente excluir ?", "Confirmar", JOptionPane.YES_NO_OPTION);
-            if (op == JOptionPane.YES_OPTION) {
-                ConJustificativa conJust = new ConJustificativa();
 
-                /*Pega o id do aluno pesquisado, e usa para excluir*/
-                
-                conJust.ExcluirJust(id);
+            if (id == 1 || id == 7) {
+                JOptionPane.showMessageDialog(rootPane, "Não é possivel excluir justificativa 'Novo Aluno'/'Outro'");
+            } else {
 
-                /*Mensagem de sucesso*/
-                JOptionPane.showMessageDialog(rootPane, "Registro atualizado com sucesso!!!");
-                listar();
+                int op = JOptionPane.showConfirmDialog(rootPane, "Deseja realmente excluir ?", "Confirmar", JOptionPane.YES_NO_OPTION);
+                if (op == JOptionPane.YES_OPTION) {
+                    ConJustificativa conJust = new ConJustificativa();
+
+                    /*Pega o id do aluno pesquisado, e usa para excluir*/
+                    conJust.ExcluirJust(id);
+
+                    /*Mensagem de sucesso*/
+                    JOptionPane.showMessageDialog(rootPane, "Registro atualizado com sucesso!!!");
+                    listar();
+                }
             }
-          }
         } catch (Exception ex) {
             /*Mensagem de erro*/
             JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro:" + ex);
@@ -339,6 +350,12 @@ public class JustCad extends javax.swing.JFrame {
                 if (Motivo.isEmpty() || Desc.isEmpty() || Qtd.isEmpty() || Motivo.equals("Insira o motivo") || Desc.equals("Insira a descrição") || Qtd.equals("Insira a quantidade de pontos")) {
                     JOptionPane.showMessageDialog(rootPane, "Todos os campos devem ser preenchidos!");
                     return;
+                } else if (Motivo.length() > 20) {
+                    JOptionPane.showMessageDialog(rootPane, "O motivo deve ter no máximo 20 caracteres");
+                    return;
+                } else if (Desc.length() > 30) {
+                    JOptionPane.showMessageDialog(rootPane, "A descrição deve ter no máximo 30 caracteres");
+                    return;
                 }
                 double qtd;
                 int id;
@@ -349,12 +366,20 @@ public class JustCad extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(rootPane, "Os campos IdTurma e Quantidade deve ser numeros valido!");
                     return;
                 }
+
+                if (qtd == 0) {
+                    JOptionPane.showMessageDialog(rootPane, "A quantidade de pontos não pode ser 0");
+                    return;
+                }
+
                 // String Desc, String Motivo, Double qtd, String Status, int id
                 ConJustificativa conJust = new ConJustificativa();
-                conJust.EditarJust(Desc, Motivo, qtd, Status, id);
+                Boolean confirm = conJust.EditarJust(Desc, Motivo, qtd, Status, id);
+                if (confirm) {
+                    JOptionPane.showMessageDialog(rootPane, "Edição feita com Sucesso!!");
+                    listar();
+                }
 
-                JOptionPane.showMessageDialog(rootPane, "Edição feita com Sucesso!!");
-                listar();
             }
 
         } catch (Exception ex) {

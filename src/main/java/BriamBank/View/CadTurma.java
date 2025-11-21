@@ -290,8 +290,6 @@ public class CadTurma extends javax.swing.JFrame {
 
             if (confirm) {
                 JOptionPane.showMessageDialog(rootPane, "Registro Cadastrado com Sucesso!!");
-            } else {
-                txtIdTurma.setText("");
             }
 
         } catch (Exception ex) {
@@ -346,8 +344,10 @@ public class CadTurma extends javax.swing.JFrame {
                     return;
                 } else if (curso.length() > 30) {
                     JOptionPane.showMessageDialog(rootPane, "O Campo curso deve ter entre 1-30 caracteres");
+                    return;
                 } else if (nomeTurma.length() > 20) {
                     JOptionPane.showMessageDialog(rootPane, "O canmpo Nome da Turma deve ter entre 1-20 caracteres");
+                    return;
                 }
                 int Ano, Id;
                 try {
@@ -374,9 +374,14 @@ public class CadTurma extends javax.swing.JFrame {
                 turma.setNOME_Turma(nomeTurma);
                 turma.setID_Turma(Id);
 
-                conTurma.editar(turma);
+                Boolean confirm = conTurma.editar(turma);
 
-                JOptionPane.showMessageDialog(rootPane, "Registro Cadastrado com Sucesso!!");
+                if (confirm) {
+                    JOptionPane.showMessageDialog(rootPane, "Registro Cadastrado com Sucesso!!");
+                } else {
+                    txtIdTurma.setText("");
+                }
+
             }
 
         } catch (Exception ex) {

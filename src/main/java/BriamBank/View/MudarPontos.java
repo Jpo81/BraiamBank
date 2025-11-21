@@ -381,9 +381,11 @@ public class MudarPontos extends javax.swing.JFrame {
                 String status = String.valueOf(linha.get(5));
 
                 if (!"false".equalsIgnoreCase(status)) {
-
-                    String motivo = String.valueOf(linha.get(4));
-                    comboJustificativas.addItem(motivo);
+                    if (!linha.get(4).equals("Novo aluno")) {
+                        String motivo = String.valueOf(linha.get(4));
+                        comboJustificativas.addItem(motivo);
+                    }
+                    
                 }
             }
 

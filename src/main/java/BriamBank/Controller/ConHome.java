@@ -9,5 +9,5 @@ package BriamBank.Controller;
  * @author LABINFO
  */
 public class ConHome {
-    
+
 }

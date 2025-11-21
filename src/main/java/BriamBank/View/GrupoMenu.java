@@ -39,36 +39,45 @@ public class GrupoMenu extends javax.swing.JFrame {
         }
         ImageIcon icon = new ImageIcon(BrianBank.class.getResource("/assets/icons/bblogo.png"));
         setIconImage(icon.getImage());
-        
+
         initComponents();
     }
 
     public GrupoMenu(String NomeTurma) {
         if (Session.getInstancia().getProfessorLogado() == null) {
-            JOptionPane.showMessageDialog(rootPane, "Não é possivel acessar essa tela sem realizar o login, o programa será encerrado por segurança");
+            JOptionPane.showMessageDialog(rootPane,
+                    "Não é possível acessar essa tela sem realizar o login, o programa será encerrado por segurança");
             System.exit(0);
-        }this.NomeTurma = NomeTurma;
+        }
+
+        this.NomeTurma = NomeTurma;
+
         ImageIcon icon = new ImageIcon(BrianBank.class.getResource("/assets/icons/bblogo.png"));
         setIconImage(icon.getImage());
-        
+
         initComponents();
+
         ConTurma conTurma = new ConTurma();
-        System.out.println("NomeTurma");
-        Vector<Turma> vetor = conTurma.RetornaTurmaCompleta(NomeTurma);
+        Vector<Turma> vetor = conTurma.retornar_turmas();
 
         panelCards.setLayout(new BoxLayout(panelCards, BoxLayout.Y_AXIS));
 
         for (int i = 0; i < vetor.size(); i++) {
             Turma t = vetor.get(i);
-            //String nomeTurma, String nomeCurso, int CodTurma, String Grupo
 
-            JCardGrupo card = new JCardGrupo(t.getNOME_Turma(), t.getCURSO_Turma(), t.getID_Turma(), t.getGRUPO_Turma());
+            JCardGrupo card = new JCardGrupo(
+                    t.getNOME_Turma(),
+                    t.getCURSO_Turma(),
+                    t.getID_Turma(),
+                    t.getGRUPO_Turma()
+            );
+
             panelCards.add(card);
-
         }
 
         panelCards.revalidate();
         panelCards.repaint();
+
     }
 
     /**

@@ -256,7 +256,7 @@ public class ConTurma {
         }
     }
 
-    public void editar(Turma turma) {
+    public boolean editar(Turma turma) {
         /*Vendo se user está logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
@@ -279,13 +279,21 @@ public class ConTurma {
                 psmt.setInt(7, prof.getRM_Professor());
                 psmt.executeUpdate();
                 conn.desconectar();
+                return true;
             } catch (SQLException ex) {
                 /*Mensagem de erro*/
-                JOptionPane.showMessageDialog(null, "Ocorreu um ERRO:" + ex);
+                if (ex instanceof SQLIntegrityConstraintViolationException) {
+                    JOptionPane.showMessageDialog(null, "Essa turma já existe");
+                    return false;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Ocorreu um ERRO:" + ex);
+                    return false;
+                }
             }
         } else {
             /*Mensagem de n está logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel efetuar a edição pois você não está logado(a)");
+            return false;
         }
     }
 

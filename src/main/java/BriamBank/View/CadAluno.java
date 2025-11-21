@@ -296,12 +296,21 @@ public class CadAluno extends javax.swing.JFrame {
                 }
                 return;
 
+            } else if (nome.length() > 30) {
+                JOptionPane.showMessageDialog(rootPane, "O nome do aluno deve ter no máximo 30 caracteres");
+                return;
             } else if (rmStr.length() > 5 || rmStr.length() < 5) {
                 JOptionPane.showMessageDialog(rootPane, "o rm deve ter 5 digitos");
-            }
-            if (!email.isEmpty() && !email.equals("E-Mail do Aluno") && !email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-                JOptionPane.showMessageDialog(rootPane, "Email inválido!");
                 return;
+            }
+            if (!email.isEmpty() && !email.equals("E-Mail do Aluno")) {
+                if (email.length() > 30) {
+                    JOptionPane.showMessageDialog(rootPane, "O email do aluno deve ter no máximo 30 caracteres");
+                    return;
+                } else if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                    JOptionPane.showMessageDialog(rootPane, "Email inválido!");
+                    return;
+                }
             }
 
             int rm;
@@ -395,14 +404,22 @@ public class CadAluno extends javax.swing.JFrame {
                     }
                     return;
 
+                } else if (nome.length() > 30) {
+                    JOptionPane.showMessageDialog(rootPane, "O nome do aluno deve ter no máximo 30 caracteres");
+                    return;
                 } else if (rmStr.length() > 5 || rmStr.length() < 5) {
                     JOptionPane.showMessageDialog(rootPane, "o rm deve ter 5 digitos");
-                }
-                if (!email.isEmpty() && !email.equals("E-Mail do Aluno") && !email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-                    JOptionPane.showMessageDialog(rootPane, "Email inválido!");
                     return;
                 }
-
+                if (!email.isEmpty() && !email.equals("E-Mail do Aluno")) {
+                    if (email.length() > 30) {
+                        JOptionPane.showMessageDialog(rootPane, "O email do aluno deve ter no máximo 30 caracteres");
+                        return;
+                    } else if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                        JOptionPane.showMessageDialog(rootPane, "Email inválido!");
+                        return;
+                    }
+                }
                 int rm, id;
                 try {
                     rm = Integer.parseInt(rmStr);

@@ -12,6 +12,7 @@ import BriamBank.Model.Turma;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Vector;
@@ -148,9 +149,8 @@ public class ConJustificativa {
         return null;
     }
 
-    public void CadastrarJust(String Desc, String Motivo, Double qtd, String Status) {
+    public boolean CadastrarJust(String Desc, String Motivo, Double qtd, String Status) {
         Professor prof = Session.getInstancia().getProfessorLogado();
-        Justificativa just = new Justificativa();
 
         if (prof != null) {
             String sql = "INSERT INTO JUSTIFICATIVAS (Descricao, Motivo, Quantidade, Data, Status) "
@@ -158,11 +158,11 @@ public class ConJustificativa {
             try {
                 Boolean status;
                 if (Status.equals("Inativo")) {
-                status = false;
-                }else {
-                status = true;
+                    status = false;
+                } else {
+                    status = true;
                 }
-                
+
                 LocalDateTime agora = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 String dataHoraMySQL = agora.format(formatter);
@@ -177,17 +177,27 @@ public class ConJustificativa {
                 conn.desconectar();
 
                 System.out.println("Cadstro de Justificativa realizado com sucesso");
+                return true;
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, "Não foi possivel realizar o cadastro da justificativa");
-                conn.desconectar();
+
+                if (ex instanceof SQLIntegrityConstraintViolationException) {
+                    JOptionPane.showMessageDialog(null, "Esse motivo já existe");
+                    return false;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Não foi possivel realizar o cadastro da justificativa");
+                    conn.desconectar();
+                    return false;
+                }
+
             }
         } else {
             JOptionPane.showMessageDialog(null, "Não foi possivel realizar o cadastro pois voce não esta logado");
+            return false;
         }
 
     }
 
-    public void EditarJust(String Desc, String Motivo, Double qtd, String Status, int id) {
+    public boolean EditarJust(String Desc, String Motivo, Double qtd, String Status, int id) {
         Professor prof = Session.getInstancia().getProfessorLogado();
 
         if (prof != null) {
@@ -217,12 +227,21 @@ public class ConJustificativa {
                 conn.desconectar();
 
                 System.out.println("Edição de Justificativa realizado com sucesso!");
+                return true;
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, "Não foi possivel realizar a edição da justificativa");
-                conn.desconectar();
+                if (ex instanceof SQLIntegrityConstraintViolationException) {
+                    JOptionPane.showMessageDialog(null, "Esse motivo já existe");
+                    return false;
+                } else {
+
+                    JOptionPane.showMessageDialog(null, "Não foi possivel realizar a edição da justificativa");
+                    conn.desconectar();
+                    return false;
+                }
             }
         } else {
             JOptionPane.showMessageDialog(null, "Não foi possivel realizar o update pois voce não esta logado");
+            return false;
         }
     }
 

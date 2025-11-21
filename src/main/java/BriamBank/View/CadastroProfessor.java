@@ -181,9 +181,9 @@ public class CadastroProfessor extends javax.swing.JFrame {
                     .addComponent(btnSenha1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtSenha, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtSenhaConfirm, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
-                    .addComponent(btnSenha2, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnSenha2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtSenhaConfirm, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(56, 56, 56)
                 .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
@@ -215,11 +215,13 @@ public class CadastroProfessor extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(rootPane, "RM inválido! Deve ter exatamente 5 dígitos.");
             } else if (nome.length() > 30) {
                 JOptionPane.showMessageDialog(rootPane, "O nome deve ter no máximo 30 caracteres");
-            } else if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$") || email.length() > 30) /* letra num underline hifen . @ dominio .com . org etc*/ {
+            } else if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) /* letra num underline hifen . @ dominio .com . org etc*/ {
                 JOptionPane.showMessageDialog(rootPane, "Email inválido!");
-            } else if (!senha.matches("[0-9a-zA-Z$*&@#]{8,32}")) /*1 num 1 letra min 1 letra maisc 1 sp char*/ {
+            } else if (email.length() > 30) {
+                JOptionPane.showMessageDialog(rootPane, "O Email deve ter no maximo 30 caracteres");
+            }else if (!senha.matches("[0-9a-zA-Z$*&@#]{8,32}")) /*1 num 1 letra min 1 letra maisc 1 sp char*/ {
                 JOptionPane.showMessageDialog(rootPane, "A senha deve ter entre 8 e 32 caracteres e ao menos 1 caracter especial ($*&@#)!");
-            } else if (senhac != senha) {
+            } else if (!senhac.equals(senha)) {
                 JOptionPane.showMessageDialog(rootPane, "As senhas não são iguais!");
             } else {
                 int rm = Integer.parseInt(rmText);
@@ -241,8 +243,6 @@ public class CadastroProfessor extends javax.swing.JFrame {
                     novaTela.setVisible(true);
                     this.dispose();
 
-                } else {
-                    JOptionPane.showMessageDialog(rootPane, "Erro ao cadastrar. RM ou Email já existe!");
                 }
             }
 

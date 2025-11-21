@@ -8,9 +8,11 @@ package BriamBank.Model.componentes;
  *
  * @author Miguel
  */
+import BriamBank.Model.Session;
 import BriamBank.View.MenuCad;
 import BriamBank.View.Home;
 import BriamBank.View.JustCad;
+import BriamBank.View.Login;
 import BriamBank.View.MenuTurma;
 import BriamBank.View.MudarPontos;
 import BriamBank.View.RelatorioGerar;
@@ -30,6 +32,7 @@ public class MenuLateral extends JPanel {
     private JButton btnJustificativas;
     private JButton btnRelatorio;
     private JButton btnCadastrar;
+    private JButton btnSair;
 
     public MenuLateral() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -111,7 +114,32 @@ public class MenuLateral extends JPanel {
         add(btnCadastrar);
 
         add(Box.createVerticalGlue());
+        
+        
+        
+        btnSair = criarBotao("Sair", "/assets/icons/exit.png", e -> {
+            int op = JOptionPane.showConfirmDialog(null,
+                    "Deseja realmente deslogar ?",
+                    "Confirmar saída",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (op == JOptionPane.YES_OPTION) {
+                try {
+                Session.getInstancia().limparSessao();
+                Login login = new Login();
+                login.setVisible(true);
+                JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                frame.dispose();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Ocorreu um erro então o programa sera fechado por segurança" );
+                    System.exit(0);
+                }
+            }
+        });
+        add(btnSair);
     }
+
+    
 
     private JLabel criarTituloSecao(String texto) {
         JLabel label = new JLabel(texto);

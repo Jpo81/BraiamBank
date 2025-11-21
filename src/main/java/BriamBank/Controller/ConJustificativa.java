@@ -26,11 +26,13 @@ public class ConJustificativa {
 
     Conexao conn = new Conexao();
 
+    /*Retorna todas as justificativas cadastradas no banco*/
     public Vector RetornaJusts() {
-
+        /*Vendo se o user ta logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
         if (prof != null) {
+            /*Comando SQL*/
             String sql = "SELECT * FROM justificativas";
 
             Vector lista = new Vector();
@@ -39,6 +41,7 @@ public class ConJustificativa {
                 PreparedStatement pstmt = conn.conectar().prepareCall(sql);
                 ResultSet rs = pstmt.executeQuery();
 
+                /*Pegando as infos no banco*/
                 while (rs.next()) {
                     Justificativa just = new Justificativa();
                     just.setID_Justificativa(rs.getInt("IdJustificativa"));
@@ -48,7 +51,7 @@ public class ConJustificativa {
                     just.setMOTIVO_Justificativa(rs.getString("Motivo"));
                     just.setSTATUS_Just(rs.getBoolean("status"));
 
-                    // Cria uma linha com os dados da justificativa
+                    /*Cria uma linha com os dados da justificativa*/
                     Vector linha = new Vector();
                     linha.addElement(just.getID_Justificativa());
                     linha.addElement(just.getDATE_Justificativa());
@@ -63,6 +66,7 @@ public class ConJustificativa {
                 conn.desconectar();
 
             } catch (SQLException ex) {
+                /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex);
                 conn.desconectar();
             }
@@ -70,18 +74,22 @@ public class ConJustificativa {
             return lista;
 
         } else {
+            /*Mensagem de erro se n estiver logado*/
             JOptionPane.showMessageDialog(null, "Não foi possível listar as justificativas pois você não está logado(a)");
+            System.exit(0);
             return null;
         }
     }
 
+    /*Retorna uma justificativa especifica pelo motivo dela*/
     public Justificativa retornaJust(String motivo) {
-
+        /*Vendo se o user ta logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
         Justificativa just = new Justificativa();
 
         if (prof != null) {
+            /*Comando SQL*/
             String sql = "Select * "
                     + "From Justificativas "
                     + "Where motivo = ?";
@@ -91,6 +99,7 @@ public class ConJustificativa {
                 stmt.setString(1, motivo);
                 ResultSet rs = stmt.executeQuery();
 
+                /*Pegando as infos no banco*/
                 if (rs.next()) {
                     just.setDATE_Justificativa(rs.getString("data"));
                     just.setID_Justificativa(rs.getInt("IdJustificativa"));
@@ -102,23 +111,28 @@ public class ConJustificativa {
                 conn.desconectar();
                 return just;
             } catch (SQLException ex) {
+                /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "erro: " + ex);
                 conn.desconectar();
             }
         } else {
+            /*Mensagem de erro se n estiver logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel realizar a consulta pois voce não esta logado");
+            System.exit(0);
         }
 
         return null;
     }
 
+    /*Retorna uma justificativa especifica pelo ID dela*/
     public Justificativa retornaJust(int id) {
-
+        /*Vendo se o user ta logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
         Justificativa just = new Justificativa();
 
         if (prof != null) {
+            /*Comando SQL*/
             String sql = "Select * "
                     + "From Justificativas "
                     + "Where IdJustificativa = ?";
@@ -128,6 +142,7 @@ public class ConJustificativa {
                 stmt.setInt(1, id);
                 ResultSet rs = stmt.executeQuery();
 
+                /*Pegando as infos no banco*/
                 if (rs.next()) {
                     just.setDATE_Justificativa(rs.getString("data"));
                     just.setID_Justificativa(rs.getInt("IdJustificativa"));
@@ -139,20 +154,26 @@ public class ConJustificativa {
                 conn.desconectar();
                 return just;
             } catch (SQLException ex) {
+                /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "erro: " + ex);
                 conn.desconectar();
             }
         } else {
+            /*Mensagem de erro se n estiver logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel realizar a consulta pois voce não esta logado");
+            System.exit(0);
         }
 
         return null;
     }
 
+    /*Cadastra uma nova justificativa no banco*/
     public boolean CadastrarJust(String Desc, String Motivo, Double qtd, String Status) {
+        /*Vendo se o user ta logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
         if (prof != null) {
+            /*comando SQL*/
             String sql = "INSERT INTO JUSTIFICATIVAS (Descricao, Motivo, Quantidade, Data, Status) "
                     + "VALUES (?, ?, ?, ?, ?)";
             try {
@@ -166,6 +187,7 @@ public class ConJustificativa {
                 LocalDateTime agora = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 String dataHoraMySQL = agora.format(formatter);
+                /*Se conectado ao banco, executando comando e desconectando*/
                 PreparedStatement stmt = conn.conectar().prepareStatement(sql);
                 stmt.setString(1, Desc);
                 stmt.setString(2, Motivo);
@@ -179,7 +201,7 @@ public class ConJustificativa {
                 System.out.println("Cadstro de Justificativa realizado com sucesso");
                 return true;
             } catch (SQLException ex) {
-
+                /*Mensagem de erro*/
                 if (ex instanceof SQLIntegrityConstraintViolationException) {
                     JOptionPane.showMessageDialog(null, "Esse motivo já existe");
                     return false;
@@ -191,16 +213,21 @@ public class ConJustificativa {
 
             }
         } else {
+            /*Mensagem de erro por não estar logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel realizar o cadastro pois voce não esta logado");
+            System.exit(0);
             return false;
         }
 
     }
 
+    /*Edita os dados de uma justificativa ja existente*/
     public boolean EditarJust(String Desc, String Motivo, Double qtd, String Status, int id) {
+        /*Vendo se user está logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
         if (prof != null) {
+            /*Comando SQL*/
             String sql = "UPDATE justificativas "
                     + "SET descricao = ?, Motivo = ?, Quantidade = ?, Data = ?, Status = ? "
                     + "WHERE IdJustificativa = ?";
@@ -215,6 +242,7 @@ public class ConJustificativa {
                 LocalDateTime agora = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 String dataHoraMySQL = agora.format(formatter);
+                /*Pegando informações e realizando*/
                 PreparedStatement stmt = conn.conectar().prepareStatement(sql);
                 stmt.setString(1, Desc);
                 stmt.setString(2, Motivo);
@@ -229,31 +257,37 @@ public class ConJustificativa {
                 System.out.println("Edição de Justificativa realizado com sucesso!");
                 return true;
             } catch (SQLException ex) {
+                /*Mensagem de erro*/
                 if (ex instanceof SQLIntegrityConstraintViolationException) {
                     JOptionPane.showMessageDialog(null, "Esse motivo já existe");
                     return false;
                 } else {
-
                     JOptionPane.showMessageDialog(null, "Não foi possivel realizar a edição da justificativa");
                     conn.desconectar();
                     return false;
                 }
             }
         } else {
+            /*Mensagem de n está logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel realizar o update pois voce não esta logado");
+            System.exit(0);
             return false;
         }
     }
 
+    /*Exclui uma justificativa do banco pelo ID*/
     public void ExcluirJust(int id) {
+        /*Vendo se o user está logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
         if (prof != null) {
+            /*comando SQL*/
             String sql = "DELETE "
                     + "FROM justificativas "
                     + "WHERE IdJustificativa = ?";
 
             try {
+                /*Se conectnado ao banco, executando comando e desconectando*/
                 PreparedStatement stmt = conn.conectar().prepareStatement(sql);
                 stmt.setInt(1, id);
                 stmt.executeUpdate();
@@ -261,11 +295,14 @@ public class ConJustificativa {
 
                 System.out.println("Exclusão de Justificativa realizada com sucesso!");
             } catch (SQLException ex) {
+                /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Não foi possivel realizar a exclusão da justificativa");
                 conn.desconectar();
             }
         } else {
+            /*Mensagem de erro por não estar logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel realizar a exclusão pois voce não esta logado");
+            System.exit(0);
         }
     }
 

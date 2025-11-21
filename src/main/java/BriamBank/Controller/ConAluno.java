@@ -24,16 +24,18 @@ public class ConAluno {
 
     Conexao conexao = new Conexao();
 
+    /*Cadastra um novo aluno no banco*/
     public boolean cadastrar(Aluno aluno) {
-
+        /*Vendo se o user ta logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
         if (prof != null) {
+            /*comando SQL*/
             String sql = "INSERT INTO ALUNO(EmailAluno, DataNasc, NomeAluno, Cod_Turma, RmAluno) "
                     + "VALUES(?,?,?,?,?);";
 
             try {
-
+                /*Se conectado ao banco, executando comando e desconectando*/
                 PreparedStatement psmt = conexao.conectar().prepareCall(sql);
                 psmt.setString(1, aluno.getEMAIL_Aluno());
                 psmt.setString(2, aluno.getDATA_NASC_Aluno());
@@ -49,25 +51,31 @@ public class ConAluno {
                 return true;
 
             } catch (SQLException ex) {
+                /*Mensagem de erro*/
                 if (ex instanceof SQLIntegrityConstraintViolationException) {
                     JOptionPane.showMessageDialog(null, "Esse aluno já existe");
                     return false;
                 } else {
+                    /*Mensagem de erro*/
                     JOptionPane.showMessageDialog(null, "Ocorreu um ERRO:" + ex);
                     return false;
                 }
             }
         } else {
+            /*Mensagem de erro por não estar logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel efetuar o cadastro pois voce não esta logado");
+            System.exit(0);
             return false;
         }
 
     }
 
+    /*Pesquisa um aluno pelo ID dele*/
     public Aluno pesquisarID(String ID) {
-
+        /*Vendo se o user ta logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
         if (prof != null) {
+            /*Comando SQL*/
             String sql = "Select * from Aluno where IDAluno = ?";
             try {
                 PreparedStatement pstmt = conexao.conectar().prepareCall(sql);
@@ -76,6 +84,7 @@ public class ConAluno {
 
                 Aluno aluno = new Aluno();
 
+                /*Pegando as infos no banco*/
                 while (rs.next()) {
                     aluno.setID_Aluno(rs.getInt("IDAluno"));
                     aluno.setEMAIL_Aluno(rs.getString("EmailAluno"));
@@ -88,25 +97,30 @@ public class ConAluno {
                 conexao.desconectar();
                 return aluno;
             } catch (SQLException ex) {
+                /*Mensagem de erro se não der pra pesquisar*/
                 JOptionPane.showMessageDialog(null, ex);
                 return null;
             }
         } else {
+            /*Mensagem de erro se n estiver logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel efetuar a pesquisa pois você não está logado(a)");
+            System.exit(0);
             return null;
         }
 
     }
 
+    /*Edita os dados de um aluno ja existente*/
     public boolean editar(Aluno aluno) {
-
+        /*Vendo se user está logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
         if (prof != null) {
+            /*Comando SQL*/
             String sql = "UPDATE ALUNO SET EmailAluno = ?, DataNasc = ?, NomeAluno = ?, Cod_Turma = ?, RmAluno = ?"
                     + " where idaluno = ?";
             try {
-
+                /*Pegando informações e realizando*/
                 PreparedStatement psmt = conexao.conectar().prepareStatement(sql);
                 psmt.setString(1, aluno.getEMAIL_Aluno());
                 psmt.setString(2, aluno.getDATA_NASC_Aluno());
@@ -119,6 +133,7 @@ public class ConAluno {
                 
                 return true;
             } catch (SQLException ex) {
+                /*Mensagem de erro*/
                if (ex instanceof SQLIntegrityConstraintViolationException) {
                     JOptionPane.showMessageDialog(null, "Já existe um aluno com este rm nesta turma");
                     return false;
@@ -128,38 +143,49 @@ public class ConAluno {
                 }
             }
         } else {
+            /*Mensagem de n está logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel efetuar a edição pois você não está logado(a)");
+            System.exit(0);
             return false;
         }
 
     }
 
+    /*Exclui um aluno do banco pelo ID*/
     public void excluir(int ID) {
+        /*Vendo se o user está logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
         if (prof != null) {
+            /*comando SQL*/
             String sql = "DELETE from Aluno where IDAluno = ?";
             try {
+                /*Se conectnado ao banco, executando comando e desconectando*/
                 PreparedStatement psmt = conexao.conectar().prepareStatement(sql);
                 psmt.setInt(1, ID);
                 psmt.executeUpdate();
                 conexao.desconectar();
 
             } catch (SQLException ex) {
+                /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Ocorreu um erro:" + ex);
             }
         } else {
+            /*Mensagem de erro por não estar logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel excluir o aluno pois você não está logado(a)");
+            System.exit(0);
 
         }
 
     }
 
+    /*Lista todos os alunos de uma turma com os pontos somados de cada um*/
     public Vector listarPorTurma(int CodTurma) {
-
+        /*Vendo se o user ta logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
         if (prof != null) {
+            /*Comando SQL*/
             String sql = "SELECT *, SUM(QtdPontos) AS 'Pontos' "
                     + "FROM aluno "
                     + "INNER JOIN pontos "
@@ -174,6 +200,7 @@ public class ConAluno {
                 pstmt.setString(1, String.valueOf(CodTurma));
                 ResultSet rs = pstmt.executeQuery();
 
+                /*Pegando as infos no banco*/
                 while (rs.next()) {
                     Aluno aluno = new Aluno();
                     aluno.setCOD_Turma(CodTurma);
@@ -196,12 +223,15 @@ public class ConAluno {
                 conexao.desconectar();
 
             } catch (SQLException ex) {
+                /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Ocorreu um erro:" + ex);
 
             }
             return lista;
         } else {
+            /*Mensagem de erro se n estiver logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel listar os alunos pois você não está logado(a)");
+            System.exit(0);
             return null;
         }
 

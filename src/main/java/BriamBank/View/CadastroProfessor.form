@@ -90,9 +90,9 @@
                   <Component id="txtSenha" pref="44" max="32767" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="txtSenhaConfirm" alignment="3" pref="44" max="32767" attributes="0"/>
-                  <Component id="btnSenha2" alignment="0" pref="44" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="btnSenha2" alignment="0" max="32767" attributes="0"/>
+                  <Component id="txtSenhaConfirm" min="-2" pref="44" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
               <Component id="jButton2" max="32767" attributes="0"/>

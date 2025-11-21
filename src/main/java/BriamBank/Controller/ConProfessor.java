@@ -11,6 +11,7 @@ import BriamBank.Model.Turma;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 
@@ -22,14 +23,17 @@ public class ConProfessor {
 
     Conexao conn = new Conexao();
 
+    /*Faz o login do professor verificando RM e senha no banco*/
     public Professor logar(Professor professor) {
+        /*comando SQL*/
         String sql = "SELECT * FROM Professor WHERE RmProfessor = ? AND Senha = ?";
         try {
             PreparedStatement stmt = conn.conectar().prepareStatement(sql);
             stmt.setString(1, String.valueOf(professor.getRM_Professor()));
             stmt.setString(2, professor.getSENHA_Professor());
             ResultSet rs = stmt.executeQuery();
-            
+
+            /*Pegando as infos no banco*/
             if (rs.next()) {
                 Professor p = new Professor();
                 p.setRM_Professor(rs.getInt("RmProfessor"));
@@ -46,51 +50,60 @@ public class ConProfessor {
                 conn.desconectar();
                 return null;
             }
-            
+
         } catch (SQLException ex) {
+            /*Mensagem de erro*/
             JOptionPane.showMessageDialog(null, "Erro ao efetuar login: " + ex);
+            
             return null;
         }
     }
 
-    
-
+    /*Cadastra um novo professor no banco*/
     public boolean cadastrar(Professor professor) {
-
+        /*comando SQL*/
         String sql = "INSERT INTO Professor (RmProfessor, Nome, EmailProfessor, Senha) VALUES (?, ?, ?, ?)";
 
         try {
+            /*Se conectado ao banco, executando comando e desconectando*/
             PreparedStatement stmt = conn.conectar().prepareStatement(sql);
             stmt.setInt(1, professor.getRM_Professor());
             stmt.setString(2, professor.getNome_Professor());
             stmt.setString(3, professor.getEMAIL_Professor());
             stmt.setString(4, professor.getSENHA_Professor());
 
-            int linhasAfetadas = stmt.executeUpdate();
+            stmt.executeUpdate();
             conn.desconectar();
-            if (linhasAfetadas == 1) {
-                System.out.println("Professor cadastrado com sucesso!");
-                return true;
+            
+            System.out.println("Professor cadastrado com sucesso!");
+            return true;
+        } catch (SQLException ex) {
+            if (ex instanceof SQLIntegrityConstraintViolationException) {
+                /*Mensagem de erro*/
+                JOptionPane.showMessageDialog(null, "Erro ao cadastrar. RM ou Email já existe!");
+                return false;
             } else {
-                System.out.println("Falha ao cadastrar o professor.");
+                /*Mensagem de erro*/
+                JOptionPane.showMessageDialog(null, "Erro ao cadastrar professor: " + ex.getMessage());
+                
                 return false;
             }
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Erro ao cadastrar professor: " + ex.getMessage());
-            return false;
         }
 
     }
 
+    /*Edita os dados de um professor ja existente*/
     public boolean editar(Professor professor) {
-
+        /*Vendo se user está logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
         if (prof != null) {
+            /*Comando SQL*/
             String sql = "UPDATE Professor "
                     + "SET Nome = ?, EmailProfessor = ?, Senha = ? "
                     + "WHERE RmProfessor = ?";
 
-            try  {
+            try {
+                /*Pegando informações e realizando*/
                 PreparedStatement stmt = conn.conectar().prepareStatement(sql);
                 stmt.setString(1, professor.getNome_Professor());
                 stmt.setString(2, professor.getEMAIL_Professor());
@@ -107,25 +120,30 @@ public class ConProfessor {
                     return false;
                 }
             } catch (SQLException ex) {
+                /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Erro ao atualizar professor: " + ex.getMessage());
                 return false;
             }
         } else {
+            /*Mensagem de n está logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel efetuar o loguin para consultar as turmas do professor");
+            System.exit(0);
             return false;
         }
 
     }
 
+    /*Exclui um professor do banco pelo RM dele*/
     public boolean excluir(int rmProfessor) {
-
+        /*Vendo se o user está logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
         if (prof != null) {
-
+            /*comando SQL*/
             String sql = "DELETE FROM Professor WHERE RmProfessor = ?";
 
             try {
+                /*Se conectnado ao banco, executando comando e desconectando*/
                 PreparedStatement stmt = conn.conectar().prepareStatement(sql);
                 stmt.setInt(1, rmProfessor);
 
@@ -139,14 +157,17 @@ public class ConProfessor {
                     return false;
                 }
             } catch (SQLException ex) {
+                /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Erro ao excluir professor: " + ex.getMessage());
+                System.exit(0);
                 return false;
             }
         } else {
+            /*Mensagem de erro por não estar logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel efetuar o loguin para consultar as turmas do professor");
             return false;
         }
 
     }
-    
+
 }

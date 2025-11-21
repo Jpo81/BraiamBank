@@ -39,8 +39,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ConRelatorio {
 
+    /*Gera relatorios em excel de todas as turmas do professor e compacta num zip*/
     public void gerarRelatorioPorProfessor() {
-
+        /*Vendo se o user ta logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
         if (prof != null) {
@@ -48,6 +49,7 @@ public class ConRelatorio {
             Connection conn = conexao.conectar();
 
             try {
+                /*Comando SQL*/
                 String sqlTurmas = "SELECT IdTurma, NomeTurma, Grupo "
                         + "FROM Turma WHERE Cod_Professor = ?";
                 PreparedStatement stmtTurmas = conn.prepareStatement(sqlTurmas);
@@ -61,21 +63,23 @@ public class ConRelatorio {
                 stmtTurmas.setInt(1, professor.getRM_Professor());
                 ResultSet rsTurmas = stmtTurmas.executeQuery();
 
-                //Cria uma pasta temporaria pra csg trabalhar mlr com os relatorios e dps compactar
+                /*Cria uma pasta temporaria pra csg trabalhar mlr com os relatorios e dps compactar*/
                 Path tempDir = Files.createTempDirectory("relatorios_brianbank_");
                 List<Path> arquivosGerados = new ArrayList<>();
 
+                /*Pegando as infos no banco*/
                 while (rsTurmas.next()) {
                     int idTurma = rsTurmas.getInt("IdTurma");
                     String nomeTurma = rsTurmas.getString("NomeTurma");
                     String grupo = rsTurmas.getString("Grupo");
 
-                    //td q n for de a-z, A-Z, 0-9 ele troca por _
+                    /*td q n for de a-z, A-Z, 0-9 ele troca por _*/
                     String nomeArquivo = nomeTurma.replaceAll("[^a-zA-Z0-9]", "_")
                             + "_Grupo_" + grupo + ".xlsx";
-                    //Cria o caminho do arquivo (basicamente pega a localização da pasta temporaria e adiciona o nome do arquivo no endereco
+                    /*Cria o caminho do arquivo (basicamente pega a localização da pasta temporaria e adiciona o nome do arquivo no endereco*/
                     Path caminhoArquivo = tempDir.resolve(nomeArquivo);
 
+                    /*Comando SQL*/
                     String sql = "SELECT A.NomeAluno, T.NomeTurma, T.Grupo, SUM(P.QtdPontos) AS QtdPontos "
                             + "FROM Aluno A "
                             + "INNER JOIN Turma T ON T.IdTurma = A.Cod_Turma "
@@ -87,7 +91,7 @@ public class ConRelatorio {
                     stmt.setInt(1, idTurma);
                     ResultSet rs = stmt.executeQuery();
 
-                    //Criação da tabela com Worbbook
+                    /*Criação da tabela com Worbbook*/
                     try (Workbook workbook = new XSSFWorkbook()) {
 
                         Sheet sheet = workbook.createSheet("Relatório de Pontos");
@@ -100,8 +104,10 @@ public class ConRelatorio {
                         }
 
                         int rowNum = 1;
+                        /*Pegando as infos no banco*/
                         while (rs.next()) {
                             String nota = "";
+                            /*Calculando nota baseado nos pontos*/
                             if (rs.getInt("QtdPontos") >= 92) {
                                 nota = "MB";
                             } else if (rs.getInt("QtdPontos") >= 85) {
@@ -134,36 +140,39 @@ public class ConRelatorio {
                 }
 
                 String zipFileName = "RelatoriosProfessor_" + professor.getRM_Professor() + ".zip";
-                //`Pega o endereco da pasta dowloads
+                /*Pega o endereco da pasta dowloads*/
                 Path downloads = Paths.get(System.getProperty("user.home"), "Downloads");
-                ////Cria o caminho do arquivo (basicamente pega a localização da pasta temporaria e adiciona o nome do arquivo no endereco
-            Path zipPath = downloads.resolve(zipFileName);
+                /*Cria o caminho do arquivo (basicamente pega a localização da pasta temporaria e adiciona o nome do arquivo no endereco*/
+                Path zipPath = downloads.resolve(zipFileName);
 
-                //Cria ou escreve em cima de um arquivo no endereco
+                /*Cria ou escreve em cima de um arquivo no endereco*/
                 try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()))) {
-                    //Um loop pra cada arquivo
+                    /*Um loop pra cada arquivo*/
                     for (Path arquivo : arquivosGerados) {
-                        //Abre o arquivo pra pdr copiar
+                        /*Abre o arquivo pra pdr copiar*/
                         try (InputStream fis = new FileInputStream(arquivo.toFile())) {
-                            // Adiciona no zip os arquivo
+                            /*Adiciona no zip os arquivo*/
                             ZipEntry entry = new ZipEntry(arquivo.getFileName().toString());
                             zos.putNextEntry(entry);
-                            //Copia o conteudo pro arquivo no zip
+                            /*Copia o conteudo pro arquivo no zip*/
                             fis.transferTo(zos);
-                            // fecha a entrada e deixa pronto pro proximo
+                            /*fecha a entrada e deixa pronto pro proximo*/
                             zos.closeEntry();
                         }
                     }
                 }
 
             } catch (Exception e) {
+                /*Mensagem de erro*/
                 System.out.println("Erro ao gerar relatórios: " + e.getMessage());
                 e.printStackTrace();
             } finally {
                 conexao.desconectar();
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Não foi possivel gerar os relatorios pois você não está logado");         
+            /*Mensagem de erro se n estiver logado*/
+            JOptionPane.showMessageDialog(null, "Não foi possivel gerar os relatorios pois você não está logado");   
+            System.exit(0);
         }
 
     }

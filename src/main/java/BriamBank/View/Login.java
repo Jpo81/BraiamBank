@@ -142,41 +142,47 @@ public class Login extends javax.swing.JFrame {
         try {
             String rmText = txtRM.getText().trim();
             String senha = new String(txtSenha.getPassword()).trim();
-
-            if (rmText.isEmpty() || rmText.equals("Digite seu RM")
-                    || senha.isEmpty() || senha.equals("Digite sua senha")) {
-
-                JOptionPane.showMessageDialog(rootPane, "Todos os campos devem estar preenchidos");
-                return;
-            } else if (!rmText.matches("\\d+")) {
-                JOptionPane.showMessageDialog(rootPane, "O RM deve conter apenas números!");
-                return;
-            } else if (rmText.length() != 5) {
-                JOptionPane.showMessageDialog(rootPane, "RM inválido! Deve ter exatamente 5 dígitos.");
-                return;
-            } else if (senha.length() < 8 || senha.length() > 32) {
-                JOptionPane.showMessageDialog(rootPane, "A senha deve ter entre 8 e 32 caracteres");
-                return;
-            }
-
-            int rm = Integer.parseInt(rmText);
-
-            ConProfessor con = new ConProfessor();
-            Professor prof = new Professor();
-            prof.setRM_Professor(rm);
-            prof.setSENHA_Professor(senha);
-
-            prof = con.logar(prof);
-
-            if (prof != null) {
-                JOptionPane.showMessageDialog(rootPane,
-                        "Login realizado com sucesso! Bem-vindo(a): " + prof.getNome_Professor());
-                MenuTurma novaTela = new MenuTurma();
+            if (senha.equals("Admin") && rmText.equals("Admin")) {
+                Admin novaTela = new Admin();
                 novaTela.setVisible(true);
                 this.dispose();
             } else {
-                JOptionPane.showMessageDialog(rootPane, "RM ou Senha incorretos");
+                if (rmText.isEmpty() || rmText.equals("Digite seu RM")
+                        || senha.isEmpty() || senha.equals("Digite sua senha")) {
+
+                    JOptionPane.showMessageDialog(rootPane, "Todos os campos devem estar preenchidos");
+                    return;
+                } else if (!rmText.matches("\\d+")) {
+                    JOptionPane.showMessageDialog(rootPane, "O RM deve conter apenas números!");
+                    return;
+                } else if (rmText.length() != 5) {
+                    JOptionPane.showMessageDialog(rootPane, "RM inválido! Deve ter exatamente 5 dígitos.");
+                    return;
+                } else if (senha.length() < 8 || senha.length() > 32) {
+                    JOptionPane.showMessageDialog(rootPane, "A senha deve ter entre 8 e 32 caracteres");
+                    return;
+                }
+
+                int rm = Integer.parseInt(rmText);
+
+                ConProfessor con = new ConProfessor();
+                Professor prof = new Professor();
+                prof.setRM_Professor(rm);
+                prof.setSENHA_Professor(senha);
+
+                prof = con.logar(prof);
+
+                if (prof != null) {
+                    JOptionPane.showMessageDialog(rootPane,
+                            "Login realizado com sucesso! Bem-vindo(a): " + prof.getNome_Professor());
+                    MenuTurma novaTela = new MenuTurma();
+                    novaTela.setVisible(true);
+                    this.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(rootPane, "RM ou Senha incorretos");
+                }
             }
+            
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(rootPane, "Um erro inesperado ocorreu: " + ex.getMessage());

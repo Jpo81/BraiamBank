@@ -54,7 +54,7 @@ public class ConProfessor {
         } catch (SQLException ex) {
             /*Mensagem de erro*/
             JOptionPane.showMessageDialog(null, "Erro ao efetuar login: " + ex);
-            
+
             return null;
         }
     }
@@ -74,7 +74,7 @@ public class ConProfessor {
 
             stmt.executeUpdate();
             conn.desconectar();
-            
+
             System.out.println("Professor cadastrado com sucesso!");
             return true;
         } catch (SQLException ex) {
@@ -85,7 +85,7 @@ public class ConProfessor {
             } else {
                 /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Erro ao cadastrar professor: " + ex.getMessage());
-                
+
                 return false;
             }
         }
@@ -94,9 +94,7 @@ public class ConProfessor {
 
     /*Edita os dados de um professor ja existente*/
     public boolean editar(Professor professor) {
-        /*Vendo se user está logado*/
-        Professor prof = Session.getInstancia().getProfessorLogado();
-        if (prof != null) {
+        
             /*Comando SQL*/
             String sql = "UPDATE Professor "
                     + "SET Nome = ?, EmailProfessor = ?, Senha = ? "
@@ -124,21 +122,13 @@ public class ConProfessor {
                 JOptionPane.showMessageDialog(null, "Erro ao atualizar professor: " + ex.getMessage());
                 return false;
             }
-        } else {
-            /*Mensagem de n está logado*/
-            JOptionPane.showMessageDialog(null, "Não foi possivel efetuar o loguin para consultar as turmas do professor");
-            System.exit(0);
-            return false;
-        }
+        
 
     }
 
     /*Exclui um professor do banco pelo RM dele*/
     public boolean excluir(int rmProfessor) {
-        /*Vendo se o user está logado*/
-        Professor prof = Session.getInstancia().getProfessorLogado();
-
-        if (prof != null) {
+        
             /*comando SQL*/
             String sql = "DELETE FROM Professor WHERE RmProfessor = ?";
 
@@ -162,10 +152,76 @@ public class ConProfessor {
                 System.exit(0);
                 return false;
             }
-        } else {
-            /*Mensagem de erro por não estar logado*/
-            JOptionPane.showMessageDialog(null, "Não foi possivel efetuar o loguin para consultar as turmas do professor");
-            return false;
+        
+
+    }
+
+    /*Lista todos os professores cadastrados no banco*/
+    public Vector listar() {
+
+        String sql = "SELECT * FROM Professor ORDER BY RmProfessor";
+
+        Vector lista = new Vector();
+
+        try {
+            PreparedStatement pstmt = conn.conectar().prepareCall(sql);
+            ResultSet rs = pstmt.executeQuery();
+
+            /*Pegando as infos no banco*/
+            while (rs.next()) {
+                Professor professor = new Professor();
+                professor.setRM_Professor(rs.getInt("RmProfessor"));
+                professor.setNome_Professor(rs.getString("Nome"));
+                professor.setEMAIL_Professor(rs.getString("EmailProfessor"));
+                professor.setSENHA_Professor(rs.getString("Senha"));
+
+                /*Cria uma linha com os dados do professor*/
+                Vector linha = new Vector();
+                linha.addElement(professor.getRM_Professor());
+                linha.addElement(professor.getNome_Professor());
+                linha.addElement(professor.getEMAIL_Professor());
+
+                lista.addElement(linha);
+            }
+
+            conn.desconectar();
+
+        } catch (SQLException ex) {
+            /*Mensagem de erro*/
+            JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + ex);
+            conn.desconectar();
+        }
+
+        return lista;
+
+    }
+
+    /*Pesquisa um professor pelo RM dele*/
+    public Professor pesquisarPorRM(int rmProfessor) {
+
+        /*Comando SQL*/
+        String sql = "SELECT * FROM Professor WHERE RmProfessor = ?";
+        try {
+            PreparedStatement pstmt = conn.conectar().prepareCall(sql);
+            pstmt.setInt(1, rmProfessor);
+            ResultSet rs = pstmt.executeQuery();
+
+            Professor professor = new Professor();
+
+            /*Pegando as infos no banco*/
+            if (rs.next()) {
+                professor.setRM_Professor(rs.getInt("RmProfessor"));
+                professor.setNome_Professor(rs.getString("Nome"));
+                professor.setEMAIL_Professor(rs.getString("EmailProfessor"));
+                professor.setSENHA_Professor(rs.getString("Senha"));
+            }
+            conn.desconectar();
+            return professor;
+        } catch (SQLException ex) {
+            /*Mensagem de erro se não der pra pesquisar*/
+            JOptionPane.showMessageDialog(null, "Ocorreu um erro ao pesquisar professor: " + ex);
+            conn.desconectar();
+            return null;
         }
 
     }

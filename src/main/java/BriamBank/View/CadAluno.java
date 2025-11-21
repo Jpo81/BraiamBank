@@ -28,17 +28,27 @@ public class CadAluno extends javax.swing.JFrame {
      * Creates new form CadAluno
      */
     public CadAluno() {
+        
+        /*Verifica se o professor esta logado*/
         if (Session.getInstancia().getProfessorLogado() == null) {
             JOptionPane.showMessageDialog(rootPane, "Não é possivel acessar essa tela sem realizar o login, o programa será encerrado por segurança");
             System.exit(0);
         }
+        
+        /*Adiciona o icone na janela */
         ImageIcon icon = new ImageIcon(BrianBank.class.getResource("/assets/icons/bblogo.png"));
         setIconImage(icon.getImage());
-
+        
+        /*Carrega os componentes da tela*/
         initComponents();
+        
+        /*Carrega as turmas que existem e que são do professor*/
         carregarTurmas();
+        
+        /*Carrega os hint das caixas de textos*/
         adicionarHintText();
-
+        
+        /*Quando a tela fechar vai dar foco na jLabel1*/
         java.awt.EventQueue.invokeLater(() -> {
             jLabel1.requestFocusInWindow();
         });
@@ -283,30 +293,40 @@ public class CadAluno extends javax.swing.JFrame {
 
     private void cadastrarAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cadastrarAActionPerformed
         try {
+            
+            /*Vai pegar os textos e itens que forma colocados pelo usuario e passa para uma variavel*/
             String nome = txtNomeAluno.getText().trim();
             String email = txtEmailAluno.getText().trim();
             String dataNasc = txtDataNasc.getText().trim();
             String turmaStr = (String) comboTurma.getSelectedItem();
             String rmStr = txtRmAluno.getText().trim();
-
+ 
+            /*Verifica se tudo foi preenchido*/
             if (nome.isEmpty() || turmaStr.isEmpty() || rmStr.isEmpty() || nome.equals("Nome do aluno") || rmStr.equals("Rm do Aluno")) {
                 JOptionPane.showMessageDialog(rootPane, "Todos os campos devem ser preenchidos!");
                 if (dataNasc.equals("AAAA-MM-DD")) {
                     dataNasc = null;
                 }
                 return;
-
+            
+            /*Verifica se o nome do aluno tem ate 30 caracteres*/
             } else if (nome.length() > 30) {
                 JOptionPane.showMessageDialog(rootPane, "O nome do aluno deve ter no máximo 30 caracteres");
                 return;
+                
+            /*Verifica se o rm tem 5 digitos*/
             } else if (rmStr.length() > 5 || rmStr.length() < 5) {
                 JOptionPane.showMessageDialog(rootPane, "o rm deve ter 5 digitos");
                 return;
             }
+            
+            /*Verifica se o email do aluno tem ate 30 caracteres*/
             if (!email.isEmpty() && !email.equals("E-Mail do Aluno")) {
                 if (email.length() > 30) {
                     JOptionPane.showMessageDialog(rootPane, "O email do aluno deve ter no máximo 30 caracteres");
                     return;
+                    
+                /*Verifica se há caracteres que não podem estar em um email*/
                 } else if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
                     JOptionPane.showMessageDialog(rootPane, "Email inválido!");
                     return;
@@ -315,6 +335,7 @@ public class CadAluno extends javax.swing.JFrame {
 
             int rm;
             try {
+                /*pega o rm*/
                 rm = Integer.parseInt(rmStr);
 
             } catch (NumberFormatException ex) {
@@ -329,10 +350,13 @@ public class CadAluno extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(rootPane, "Data de nascimento inválida! Use o formato AAAA-MM-DD.");
                     return;
                 }
-
+                /*Pega o ano que foi colocado*/
                 int ano = Integer.parseInt(dataNasc.substring(0, 4));
+                
+                /*Pega o ano atual*/
                 int anoAtual = LocalDate.now().getYear();
-
+                
+                /*Verifica se o ano esta dentro das especificações*/
                 if (ano < (anoAtual - 100) || ano > (anoAtual - 10)) {
                     JOptionPane.showMessageDialog(rootPane,
                             "Ano inválido! Deve estar entre " + (anoAtual - 100) + " e " + (anoAtual - 10));
@@ -342,20 +366,29 @@ public class CadAluno extends javax.swing.JFrame {
                 dataNasc = null;
             }
 
+            /*Instanciando e criando o objeto Conturma*/
             ConTurma conTurma = new ConTurma();
+            
+            /*Instanciando e criando o objeto turma*/
             Turma turma = new Turma();
 
+            /*Instanciando e criando o objeto aluno*/
             Aluno aluno = new Aluno();
+            
+            /*Instanciando e criando o objeto Conaluno*/
             ConAluno conAluno = new ConAluno();
-
+            
+            /*Pega as turmas do professor*/
             turma = conTurma.retornaTurma(turmaStr);
-
+            
+            /*Usa o metodo set para mandar os dados de cadastro para os objetos*/
             aluno.setEMAIL_Aluno(email);
             aluno.setDATA_NASC_Aluno(dataNasc);
             aluno.setNOME_Aluno(nome);
             aluno.setCOD_Turma(turma.getID_Turma());
             aluno.setRM_Aluno(rm);
-
+           
+            /*Pede uma comfirmação de cadastro*/
             boolean confirm = conAluno.cadastrar(aluno);
 
             if (confirm) {
@@ -369,11 +402,12 @@ public class CadAluno extends javax.swing.JFrame {
 
     private void excluirAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_excluirAActionPerformed
         try {
-
+            /*verificação se o usuario quer realmente excluir o aluno*/
             int op = JOptionPane.showConfirmDialog(rootPane, "Deseja realmente excluir ?", "Confirmar", JOptionPane.YES_NO_OPTION);
             if (op == JOptionPane.YES_OPTION) {
                 ConAluno conAluno = new ConAluno();
-
+                    
+                /*Pega o id e exclui o aluno*/
                 int id = Integer.parseInt(txtIdAluno.getText());
                 conAluno.excluir(id);
 
@@ -388,8 +422,11 @@ public class CadAluno extends javax.swing.JFrame {
     private void editarAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editarAActionPerformed
         try {
 
+            /*verificação se o usuario quer realmente editar o aluno*/
             int op = JOptionPane.showConfirmDialog(rootPane, "Deseja realmente editar ?", "Confirmar", JOptionPane.YES_NO_OPTION);
             if (op == JOptionPane.YES_OPTION) {
+                
+                /*Vai pegar os textos e itens que forma colocados pelo usuario e passa para uma variavel*/
                 String nome = txtNomeAluno.getText().trim();
                 String email = txtEmailAluno.getText().trim();
                 String dataNasc = txtDataNasc.getText().trim();
@@ -397,33 +434,45 @@ public class CadAluno extends javax.swing.JFrame {
                 String rmStr = txtRmAluno.getText().trim();
                 String idStr = txtIdAluno.getText().trim();
 
-                if (nome.isEmpty() || turmaStr.isEmpty() || rmStr.isEmpty() || nome.equals("Nome do aluno") || rmStr.equals("Rm do Aluno") || idStr.equals("ID") || idStr.isEmpty()) {
-                    JOptionPane.showMessageDialog(rootPane, "Todos os campos devem ser preenchidos!");
-                    if (dataNasc.equals("AAAA-MM-DD")) {
-                        dataNasc = null;
-                    }
+                 /*Verifica se tudo foi preenchido*/
+            if (nome.isEmpty() || turmaStr.isEmpty() || rmStr.isEmpty() || nome.equals("Nome do aluno") || rmStr.equals("Rm do Aluno")) {
+                JOptionPane.showMessageDialog(rootPane, "Todos os campos devem ser preenchidos!");
+                if (dataNasc.equals("AAAA-MM-DD")) {
+                    dataNasc = null;
+                }
+                return;
+            
+            /*Verifica se o nome do aluno tem ate 30 caracteres*/
+            } else if (nome.length() > 30) {
+                JOptionPane.showMessageDialog(rootPane, "O nome do aluno deve ter no máximo 30 caracteres");
+                return;
+                
+            /*Verifica se o rm tem 5 digitos*/
+            } else if (rmStr.length() > 5 || rmStr.length() < 5) {
+                JOptionPane.showMessageDialog(rootPane, "o rm deve ter 5 digitos");
+                return;
+            }
+            
+            /*Verifica se o email do aluno tem ate 30 caracteres*/
+            if (!email.isEmpty() && !email.equals("E-Mail do Aluno")) {
+                if (email.length() > 30) {
+                    JOptionPane.showMessageDialog(rootPane, "O email do aluno deve ter no máximo 30 caracteres");
                     return;
+                    
+                /*Verifica se há caracteres que não podem estar em um email*/
+                } else if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                    JOptionPane.showMessageDialog(rootPane, "Email inválido!");
+                    return;
+                }
+            }
 
-                } else if (nome.length() > 30) {
-                    JOptionPane.showMessageDialog(rootPane, "O nome do aluno deve ter no máximo 30 caracteres");
-                    return;
-                } else if (rmStr.length() > 5 || rmStr.length() < 5) {
-                    JOptionPane.showMessageDialog(rootPane, "o rm deve ter 5 digitos");
-                    return;
-                }
-                if (!email.isEmpty() && !email.equals("E-Mail do Aluno")) {
-                    if (email.length() > 30) {
-                        JOptionPane.showMessageDialog(rootPane, "O email do aluno deve ter no máximo 30 caracteres");
-                        return;
-                    } else if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-                        JOptionPane.showMessageDialog(rootPane, "Email inválido!");
-                        return;
-                    }
-                }
                 int rm, id;
                 try {
+                    
+                    /*Pega rm e id*/
                     rm = Integer.parseInt(rmStr);
                     id = Integer.parseInt(idStr);
+                    
                 } catch (NumberFormatException nfe) {
                     JOptionPane.showMessageDialog(rootPane, "Campos RM, Turma e ID devem ser números válidos!");
                     return;
@@ -431,32 +480,43 @@ public class CadAluno extends javax.swing.JFrame {
 
                 if (dataNasc != null && !dataNasc.isEmpty() && !dataNasc.equals("AAAA-MM-DD")) {
 
-                    // valida formato AAAA-MM-DD
-                    if (!dataNasc.matches("\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])")) {
-                        JOptionPane.showMessageDialog(rootPane, "Data de nascimento inválida! Use o formato AAAA-MM-DD.");
-                        return;
-                    }
-
-                    int ano = Integer.parseInt(dataNasc.substring(0, 4));
-                    int anoAtual = LocalDate.now().getYear();
-
-                    if (ano < (anoAtual - 100) || ano > (anoAtual - 10)) {
-                        JOptionPane.showMessageDialog(rootPane,
-                                "Ano inválido! Deve estar entre " + (anoAtual - 100) + " e " + (anoAtual - 10));
-                        return;
-                    }
-                } else {
-                    dataNasc = null;
+                // valida formato AAAA-MM-DD
+                if (!dataNasc.matches("\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])")) {
+                    JOptionPane.showMessageDialog(rootPane, "Data de nascimento inválida! Use o formato AAAA-MM-DD.");
+                    return;
                 }
+                /*Pega o ano que foi colocado*/
+                int ano = Integer.parseInt(dataNasc.substring(0, 4));
+                
+                /*Pega o ano atual*/
+                int anoAtual = LocalDate.now().getYear();
+                
+                /*Verifica se o ano esta dentro das especificações*/
+                if (ano < (anoAtual - 100) || ano > (anoAtual - 10)) {
+                    JOptionPane.showMessageDialog(rootPane,
+                            "Ano inválido! Deve estar entre " + (anoAtual - 100) + " e " + (anoAtual - 10));
+                    return;
+                }
+            } else {
+                dataNasc = null;
+            }
 
-                ConTurma conTurma = new ConTurma();
-                Turma turma = new Turma();
+            /*Instanciando e criando o objeto Conturma*/
+            ConTurma conTurma = new ConTurma();
+            
+            /*Instanciando e criando o objeto turma*/
+            Turma turma = new Turma();
 
-                Aluno aluno = new Aluno();
-                ConAluno conAluno = new ConAluno();
-
-                turma = conTurma.retornaTurma(turmaStr);
-
+            /*Instanciando e criando o objeto aluno*/
+            Aluno aluno = new Aluno();
+            
+            /*Instanciando e criando o objeto Conaluno*/
+            ConAluno conAluno = new ConAluno();
+            
+            /*Pega as turmas do professor*/
+            turma = conTurma.retornaTurma(turmaStr);
+            
+                /*Usa o metodo set para mandar os dados de cadastro para os objetos*/
                 aluno.setEMAIL_Aluno(email);
                 aluno.setDATA_NASC_Aluno(dataNasc);
                 aluno.setNOME_Aluno(nome);
@@ -464,6 +524,7 @@ public class CadAluno extends javax.swing.JFrame {
                 aluno.setRM_Aluno(rm);
                 aluno.setID_Aluno(id);
 
+                /*Pede uma comfirmação de cadastro*/
                 boolean confirm = conAluno.editar(aluno);
 
                 if (confirm) {
@@ -480,34 +541,45 @@ public class CadAluno extends javax.swing.JFrame {
     }//GEN-LAST:event_editarAActionPerformed
 
     private void pesquisarAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pesquisarAActionPerformed
-        try {
-            Aluno aluno = new Aluno();
-            ConAluno conAluno = new ConAluno();
+       try {
+    // Instancia objetos necessários para manipulação e consulta de dados do aluno
+    Aluno aluno = new Aluno();
+    ConAluno conAluno = new ConAluno();
 
-            aluno.setID_Aluno(Integer.parseInt(txtIdAluno.getText()));
-            aluno = conAluno.pesquisarID(String.valueOf(aluno.getID_Aluno()));
-            if (aluno.getNOME_Aluno() != null) {
-                ConTurma conTurma = new ConTurma();
-                Turma turma = new Turma();
+    // Obtém o ID do campo de texto e converte para inteiro
+    aluno.setID_Aluno(Integer.parseInt(txtIdAluno.getText()));
 
-                turma = conTurma.retornaTurma(aluno.getCOD_Turma());
+    // Pesquisa no banco um aluno correspondente ao ID informado
+    aluno = conAluno.pesquisarID(String.valueOf(aluno.getID_Aluno()));
 
-                txtIdAluno.setText(String.valueOf(aluno.getID_Aluno()));
-                txtEmailAluno.setText(aluno.getEMAIL_Aluno());
-                txtDataNasc.setText(aluno.getDATA_NASC_Aluno());
+    // Se o aluno foi encontrado (nome não é nulo), preenche os campos da tela
+    if (aluno.getNOME_Aluno() != null) {
+        ConTurma conTurma = new ConTurma();
+        Turma turma = new Turma();
 
-                comboTurma.setSelectedItem(turma.getNOME_Turma() + "-" + turma.getGRUPO_Turma());
-                txtNomeAluno.setText(aluno.getNOME_Aluno());
+        // Obtém a turma completa baseado no código armazenado no aluno
+        turma = conTurma.retornaTurma(aluno.getCOD_Turma());
 
-                txtRmAluno.setText(String.valueOf(aluno.getRM_Aluno()));
-            } else {
-                JOptionPane.showMessageDialog(rootPane, "Aluno não encontrado");
-                txtIdAluno.setText("");
-            }
+        // Preenche os campos da interface com as informações retornadas
+        txtIdAluno.setText(String.valueOf(aluno.getID_Aluno()));
+        txtEmailAluno.setText(aluno.getEMAIL_Aluno());
+        txtDataNasc.setText(aluno.getDATA_NASC_Aluno());
+        
+        comboTurma.setSelectedItem(turma.getNOME_Turma() + "-" + turma.getGRUPO_Turma());
+        txtNomeAluno.setText(aluno.getNOME_Aluno());
+        
+        txtRmAluno.setText(String.valueOf(aluno.getRM_Aluno()));
+    } else {
+        // Caso nenhum aluno seja encontrado para o ID informado
+        JOptionPane.showMessageDialog(rootPane, "Aluno não encontrado");
+        txtIdAluno.setText("");
+    }
 
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
-        }
+} catch (Exception ex) {
+    // Exibe mensagem de erro caso ocorra falha durante a pesquisa
+    JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
+}
+
     }//GEN-LAST:event_pesquisarAActionPerformed
 
     private void comboTurmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboTurmaActionPerformed
@@ -524,12 +596,16 @@ public class CadAluno extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
-            MenuCad novaTela = new MenuCad();
-            novaTela.setVisible(true);
-            this.dispose();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
-        }
+        // Cria nova instância da tela MenuCad e exibe para o usuário
+        MenuCad novaTela = new MenuCad();
+        novaTela.setVisible(true);
+
+        // Fecha a tela atual
+        this.dispose();
+    } catch (Exception ex) {
+        // Mensagem caso ocorra erro ao abrir a outra tela
+        JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
+    }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -559,27 +635,34 @@ public class CadAluno extends javax.swing.JFrame {
     }
 
     public void carregarTurmas() {
-        try {
-            ConTurma conTurma = new ConTurma();
+    try {
+        ConTurma conTurma = new ConTurma();
 
-            Vector<Turma> turmas = conTurma.retornar_turmas();
+        // Obtém todas as turmas disponíveis no banco
+        Vector<Turma> turmas = conTurma.retornar_turmas();
 
-            for (int i = 0; i < turmas.size(); i++) {
-                Turma linha = turmas.get(i);
+        // Insere cada turma no ComboBox da interface
+        for (int i = 0; i < turmas.size(); i++) {
+            Turma linha = turmas.get(i);
 
-                comboTurma.addItem(linha.getNOME_Turma() + "-" + linha.getGRUPO_Turma());
+            comboTurma.addItem(linha.getNOME_Turma() + "-" + linha.getGRUPO_Turma());
 
-                System.out.println("Turma: " + linha.getNOME_Turma() + " | Grupo: " + linha.getGRUPO_Turma() + " | ID: " + linha.getID_Turma());
-
-            }
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(rootPane, "Erro ao carregar dados do professor, tente novamente mais tarde");
-            privarCampos();
+            // Exibe no console cada turma carregada (opcional)
+            System.out.println("Turma: " + linha.getNOME_Turma()
+                    + " | Grupo: " + linha.getGRUPO_Turma()
+                    + " | ID: " + linha.getID_Turma());
         }
+
+    } catch (Exception ex) {
+        // Exibe erro e desabilita campos caso ocorra falha no carregamento
+        JOptionPane.showMessageDialog(rootPane,
+                "Erro ao carregar dados do professor, tente novamente mais tarde");
+        privarCampos();
     }
+}
 
     public void privarCampos() {
+        // Desativa todos os campos da tela para impedir interação
         txtIdAluno.setEnabled(false);
         txtEmailAluno.setEnabled(false);
         txtDataNasc.setEnabled(false);
@@ -615,7 +698,10 @@ public class CadAluno extends javax.swing.JFrame {
     private javax.swing.JTextField txtRmAluno;
     // End of variables declaration//GEN-END:variables
     private void adicionarHintText() {
-
+      
+        //Vai adicionaaar todos os hints nas caixas de textos
+        
+        
         /*txtIdAluno.setEnabled(false);
         txtEmailAluno.setEnabled(false);
         txtDataNasc.setEnabled(false);

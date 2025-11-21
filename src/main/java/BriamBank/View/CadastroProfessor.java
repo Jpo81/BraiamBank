@@ -195,60 +195,81 @@ public class CadastroProfessor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        try {
-            String rmText = txtRM.getText().trim();
-            String nome = txtNOME.getText().trim();
-            String email = txtEMAIL.getText().trim();
-            String senha = new String(txtSenha.getPassword()).trim();
-            String senhac = new String(txtSenhaConfirm.getPassword()).trim();
+       try {
+           
+        // Pegando e limpando espaços dos valores digitados
+        String rmText = txtRM.getText().trim();
+        String nome = txtNOME.getText().trim();
+        String email = txtEMAIL.getText().trim();
+        String senha = new String(txtSenha.getPassword()).trim();
+        String senhac = new String(txtSenhaConfirm.getPassword()).trim();
 
-            if (rmText.isEmpty() || rmText.equals("Digite seu RM")
-                    || nome.isEmpty() || nome.equals("Digite seu Nome")
-                    || email.isEmpty() || email.equals("Digite seu E-Mail")
-                    || senha.isEmpty() || senha.equals("Digite sua senha")
-                    || senhac.isEmpty() || senha.equals("Confirme sua senha")) {
+        // Verifica se algum campo está vazio ou ainda com o texto placeholder
+        if (rmText.isEmpty() || rmText.equals("Digite seu RM")
+                || nome.isEmpty() || nome.equals("Digite seu Nome")
+                || email.isEmpty() || email.equals("Digite seu E-Mail")
+                || senha.isEmpty() || senha.equals("Digite sua senha")
+                || senhac.isEmpty() || senha.equals("Confirme sua senha")) {
 
-                JOptionPane.showMessageDialog(rootPane, "Todos os campos devem estar preenchidos");
-            } else if (!rmText.matches("\\d+")) {
-                JOptionPane.showMessageDialog(rootPane, "O RM deve conter apenas números!");
-            } else if (rmText.length() != 5) {
-                JOptionPane.showMessageDialog(rootPane, "RM inválido! Deve ter exatamente 5 dígitos.");
-            } else if (nome.length() > 30) {
-                JOptionPane.showMessageDialog(rootPane, "O nome deve ter no máximo 30 caracteres");
-            } else if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) /* letra num underline hifen . @ dominio .com . org etc*/ {
-                JOptionPane.showMessageDialog(rootPane, "Email inválido!");
-            } else if (email.length() > 30) {
-                JOptionPane.showMessageDialog(rootPane, "O Email deve ter no maximo 30 caracteres");
-            }else if (!senha.matches("[0-9a-zA-Z$*&@#]{8,32}")) /*1 num 1 letra min 1 letra maisc 1 sp char*/ {
-                JOptionPane.showMessageDialog(rootPane, "A senha deve ter entre 8 e 32 caracteres e ao menos 1 caracter especial ($*&@#)!");
-            } else if (!senhac.equals(senha)) {
-                JOptionPane.showMessageDialog(rootPane, "As senhas não são iguais!");
-            } else {
-                int rm = Integer.parseInt(rmText);
+            JOptionPane.showMessageDialog(rootPane, "Todos os campos devem estar preenchidos");
 
-                // Criar objeto professor
-                Professor prof = new Professor();
-                prof.setRM_Professor(rm);
-                prof.setNome_Professor(nome);
-                prof.setEMAIL_Professor(email);
-                prof.setSENHA_Professor(senha);
+        // RM só pode ter números
+        } else if (!rmText.matches("\\d+")) {
+            JOptionPane.showMessageDialog(rootPane, "O RM deve conter apenas números!");
 
-                // Inserir no banco (Controller)
-                ConProfessor con = new ConProfessor();
-                boolean sucesso = con.cadastrar(prof);
+        // RM deve ter exatamente 5 dígitos
+        } else if (rmText.length() != 5) {
+            JOptionPane.showMessageDialog(rootPane, "RM inválido! Deve ter exatamente 5 dígitos.");
 
-                if (sucesso) {
-                    JOptionPane.showMessageDialog(rootPane, "Professor cadastrado com sucesso!");
-                    Login novaTela = new Login();
-                    novaTela.setVisible(true);
-                    this.dispose();
+        // Nome não pode passar de 30 caracteres
+        } else if (nome.length() > 30) {
+            JOptionPane.showMessageDialog(rootPane, "O nome deve ter no máximo 30 caracteres");
 
-                }
+        // Verifica formato do email
+        } else if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            JOptionPane.showMessageDialog(rootPane, "Email inválido!");
+
+        // Email também não pode passar de 30 caracteres
+        } else if (email.length() > 30) {
+            JOptionPane.showMessageDialog(rootPane, "O Email deve ter no maximo 30 caracteres");
+
+        // Senha precisa ter 8 a 32 caracteres e ao menos 1 char especial
+        } else if (!senha.matches("[0-9a-zA-Z$*&@#]{8,32}")) {
+            JOptionPane.showMessageDialog(rootPane, "A senha deve ter entre 8 e 32 caracteres e ao menos 1 caracter especial ($*&@#)!");
+
+        // Confirmação de senha deve ser igual
+        } else if (!senhac.equals(senha)) {
+            JOptionPane.showMessageDialog(rootPane, "As senhas não são iguais!");
+        } else {
+            // Se tudo estiver OK, converte RM para inteiro
+            int rm = Integer.parseInt(rmText);
+
+            // Cria o objeto professor com os dados informados
+            Professor prof = new Professor();
+            prof.setRM_Professor(rm);
+            prof.setNome_Professor(nome);
+            prof.setEMAIL_Professor(email);
+            prof.setSENHA_Professor(senha);
+
+            // Usa o controller para tentar cadastrar no banco
+            ConProfessor con = new ConProfessor();
+            boolean sucesso = con.cadastrar(prof);
+
+            // Se retornou true, significa que cadastrou
+            if (sucesso) {
+                JOptionPane.showMessageDialog(rootPane, "Professor cadastrado com sucesso!");
+
+                // Abre a tela de login e fecha a tela atual
+                Login novaTela = new Login();
+                novaTela.setVisible(true);
+                this.dispose();
             }
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro inesperado: " + ex.getMessage());
         }
+
+    } catch (Exception ex) {
+        // Caso aconteça algum erro inesperado
+        JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro inesperado: " + ex.getMessage());
+    }
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -262,13 +283,12 @@ public class CadastroProfessor extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         try {
-            Login novaTela = new Login();
-            novaTela.setVisible(true);
-            this.dispose();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
-            JOptionPane.showMessageDialog(rootPane, ex);
-        }
+        Login novaTela = new Login();
+        novaTela.setVisible(true);
+        this.dispose(); // Fecha a tela atual
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
+    }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void txtSenhaConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSenhaConfirmActionPerformed
@@ -281,26 +301,29 @@ public class CadastroProfessor extends javax.swing.JFrame {
 
     private void btnSenha1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSenha1ActionPerformed
         try {
-            if (txtSenha.getEchoChar() == '•') {
-                txtSenha.setEchoChar((char) 0); //Desativa a mascara
-                btnSenha1.setIcon(new ImageIcon(getClass().getResource("/assets/icons/hide.png")));
-            } else {
-                txtSenha.setEchoChar('•'); // volta a mascarar
-                btnSenha1.setIcon(new ImageIcon(getClass().getResource("/assets/icons/view.png")));
-            }
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
+        // Se estiver mascarado, remove a máscara
+        if (txtSenha.getEchoChar() == '•') {
+            txtSenha.setEchoChar((char) 0);
+            btnSenha1.setIcon(new ImageIcon(getClass().getResource("/assets/icons/hide.png")));
+        } else {
+            // Se estiver visível, coloca a máscara de volta
+            txtSenha.setEchoChar('•');
+            btnSenha1.setIcon(new ImageIcon(getClass().getResource("/assets/icons/view.png")));
         }
+
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
+    }
+
     }//GEN-LAST:event_btnSenha1ActionPerformed
 
     private void btnSenha2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSenha2ActionPerformed
         try {
             if (txtSenhaConfirm.getEchoChar() == '•') {
-                txtSenhaConfirm.setEchoChar((char) 0); //Desativa a mascara
+                txtSenhaConfirm.setEchoChar((char) 0);
                 btnSenha2.setIcon(new ImageIcon(getClass().getResource("/assets/icons/hide.png")));
             } else {
-                txtSenhaConfirm.setEchoChar('•'); // volta a mascarar
+                txtSenhaConfirm.setEchoChar('•');
                 btnSenha2.setIcon(new ImageIcon(getClass().getResource("/assets/icons/view.png")));
             }
 
@@ -345,13 +368,15 @@ public class CadastroProfessor extends javax.swing.JFrame {
     private javax.swing.JPasswordField txtSenhaConfirm;
     // End of variables declaration//GEN-END:variables
     private void adicionarHintText() {
-        // === HINT do campo EMAIL ===
+
+        // HINT do EMAIL
         txtEMAIL.setText("Digite seu E-Mail");
         txtEMAIL.setForeground(Color.GRAY);
 
         txtEMAIL.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent e) {
+                // Remove o hint quando o usuário clica
                 if (txtEMAIL.getText().equals("Digite seu E-Mail")) {
                     txtEMAIL.setText("");
                     txtEMAIL.setForeground(Color.BLACK);
@@ -360,6 +385,7 @@ public class CadastroProfessor extends javax.swing.JFrame {
 
             @Override
             public void focusLost(java.awt.event.FocusEvent e) {
+                // Coloca o hint de volta se o campo foi deixado vazio
                 if (txtEMAIL.getText().isEmpty()) {
                     txtEMAIL.setText("Digite seu E-Mail");
                     txtEMAIL.setForeground(Color.GRAY);
@@ -367,7 +393,7 @@ public class CadastroProfessor extends javax.swing.JFrame {
             }
         });
 
-        // === HINT do campo SENHA ===
+        // HINT da SENHA
         txtSenha.setText("Digite sua senha");
         txtSenha.setForeground(Color.GRAY);
 
@@ -389,7 +415,7 @@ public class CadastroProfessor extends javax.swing.JFrame {
             }
         });
 
-        // === HINT do campo RM ===
+        // HINT do RM
         txtRM.setText("Digite seu RM");
         txtRM.setForeground(Color.GRAY);
 
@@ -411,7 +437,7 @@ public class CadastroProfessor extends javax.swing.JFrame {
             }
         });
 
-        // === HINT do campo Confirma SENHA ===
+        // HINT da CONFIRMAÇÃO DE SENHA
         txtSenhaConfirm.setText("Confirme sua senha");
         txtSenhaConfirm.setForeground(Color.GRAY);
 
@@ -433,7 +459,7 @@ public class CadastroProfessor extends javax.swing.JFrame {
             }
         });
 
-        // === HINT do campo NOME ===
+        // HINT do NOME
         txtNOME.setText("Digite seu Nome");
         txtNOME.setForeground(Color.GRAY);
 
@@ -451,10 +477,10 @@ public class CadastroProfessor extends javax.swing.JFrame {
                 if (txtNOME.getText().isEmpty()) {
                     txtNOME.setText("Digite seu Nome");
                     txtNOME.setForeground(Color.GRAY);
-
                 }
             }
         });
     }
+
 
 }

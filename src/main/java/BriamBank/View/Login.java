@@ -25,7 +25,7 @@ public class Login extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Login.class.getName());
 
     /**
-     * Creates new form Loguin
+     * Creates new form Loguin 
      */
     public Login() {
         /*Adiciona o icone na janela */
@@ -147,7 +147,7 @@ public class Login extends javax.swing.JFrame {
    /*Btn de logar*/
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         try {
-            /*Pega o valor posto em ambos os campos*/
+            /*Pega o valor posto em ambos os campos   */
             String rmText = txtRM.getText().trim();
             String senha = new String(txtSenha.getPassword()).trim();
 

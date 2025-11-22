@@ -18,19 +18,23 @@ import javax.swing.SwingUtilities;
  */
 public class MenuCad extends javax.swing.JFrame {
 
+     //declara um logger estático e imutável associado à classe MenuCad
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MenuCad.class.getName());
 
     /**
      * Creates new form CadMenu
      */
     public MenuCad() {
+        /*Garante que o user estja logado*/
         if (Session.getInstancia().getProfessorLogado() == null) {
             JOptionPane.showMessageDialog(rootPane, "Não é possivel acessar essa tela sem realizar o login, o programa será encerrado por segurança");
             System.exit(0);
         }
+        /*Adiciona o icone na janela */
         ImageIcon icon = new ImageIcon(BrianBank.class.getResource("/assets/icons/bblogo.png"));
         setIconImage(icon.getImage());
 
+        /*Carrega os componentes da tela*/
         initComponents();
     }
 
@@ -91,20 +95,26 @@ public class MenuCad extends javax.swing.JFrame {
 
     private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton2ActionPerformed
         try {
+            /*Chama a tela  CadTurma*/
             CadTurma cadTurma = new CadTurma();
             cadTurma.setVisible(true);
+            /*Apaga a tela atual*/
             this.dispose();
         } catch (Exception ex) {
+            /*Mensagem de erro*/
             JOptionPane.showMessageDialog(rootPane, "Ocorreu um ERRO:" + ex);
         }
     }//GEN-LAST:event_jToggleButton2ActionPerformed
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
         try {
+            /*Chama a tela CadAluno*/
             CadAluno cadAluno = new CadAluno();
             cadAluno.setVisible(true);
+            /*Apaga a tela atual*/
             this.dispose();
         } catch (Exception ex) {
+            /*Mensagem de erro*/
             JOptionPane.showMessageDialog(rootPane, "Ocorreu um ERRO:" + ex);
         }
     }//GEN-LAST:event_jToggleButton1ActionPerformed

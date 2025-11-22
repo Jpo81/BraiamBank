@@ -30,15 +30,22 @@ public class MudarPontos extends javax.swing.JFrame {
      * Creates new form Pontos
      */
     public MudarPontos() {
+        //Validação para garantir que o user está 
         if (Session.getInstancia().getProfessorLogado() == null) {
             JOptionPane.showMessageDialog(rootPane, "Não é possivel acessar essa tela sem realizar o login, o programa será encerrado por segurança");
             System.exit(0);
         }
+        /*Adiciona o icone na janela*/
         ImageIcon icon = new ImageIcon(BrianBank.class.getResource("/assets/icons/bblogo.png"));
         setIconImage(icon.getImage());
-
+        
+        /*Carrega os componentes da tela*/
         initComponents();
+        
+        /*Adiciona os hints das caixas de texto*/
         adicionarHintText();
+        
+        /*Carrega os elementos da ComboBox*/
         PreencherCombo();
     }
 
@@ -230,60 +237,85 @@ public class MudarPontos extends javax.swing.JFrame {
         try {
 
         } catch (Exception ex) {
+            /*Mensagem de erro*/
             JOptionPane.showMessageDialog(null, "Erro: " + ex);
         }
     }//GEN-LAST:event_txtPontosActionPerformed
 
+    /*Puxa as informações de um aluno, pesquisando-o pelo id*/
     private void pesquisarAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pesquisarAActionPerformed
         try {
+            /*Instancia e cria o objeto Pontos*/
             Pontos pontos = new Pontos();
+            
+            /*Instancia e cria o objeto Conpontos*/
             ConPontos conPontos = new ConPontos();
 
+            /*calcula os pontos totais de um aluno*/
             pontos = conPontos.PesquisarPontos(txtIdAluno.getText());
 
+            /*Garante que o objeto existe, ou seja, que o aluno consultado existe, e é seu aluno*/
             if (pontos != null) {
                 if (pontos.getQTD_Pontos() != null) {
+                    /*Define como texto da caixa de texto de id, o id do estudante*/
                     txtIdAluno.setText(String.valueOf(pontos.getCOD_Aluno()));
+                    
+                    /*Define como texto da caixa de texto do nome, o nome do estudante*/
                     txtNomeAluno.setText(pontos.getNOME_Aluno());
+                    
+                    /*Define como texto da caixa de texto de pontos totais, os pontos totais do estudante*/
                     txtQtdPontos.setText(String.valueOf(pontos.getQTD_Pontos()));
                 } else if (pontos.getQTD_Pontos() == null) {
+                    /*Mensagem de erro caso o aluno não exista, ou não seja seu*/
                     JOptionPane.showMessageDialog(rootPane, "Não é possivel consultar alunos de outros professores ou alunos inexistentes ");
+                    
+                    /*Define o como texto da caixa de texto de id, nada*/
                     txtIdAluno.setText("");
                 }
 
             }
 
         } catch (Exception ex) {
+            /*Mensgem de erro caso alguma Instanciação ou cálculo de pontos dê errado*/
             JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
         }
     }//GEN-LAST:event_pesquisarAActionPerformed
 
     private void comboJustificativasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboJustificativasActionPerformed
         try {
+            /*Caso a opção seja "Outro" o setEditable(true) garante que possa ser escolhido um valor para pontos adicionados/removidos*/
             if (String.valueOf(comboJustificativas.getSelectedItem()).equals("Outro")) {
                 txtPontos.setEditable(true);
             } else {
+                /*Garante que o campo de pontos adicionados/removidos não seja editável*/
                 txtPontos.setEditable(false);
+                
+                /*Instancia e cria o objeto Conjustificativa*/
                 ConJustificativa conJust = new ConJustificativa();
 
+                /*Guarda em just o item selecionado na ComboBox de justificativas */
                 Justificativa just = conJust.retornaJust(String.valueOf(comboJustificativas.getSelectedItem()));
 
+                /*Define o texto do campo de pontos adicionados/removidos com o valor da justificativa*/
                 txtPontos.setText(String.valueOf(just.getQTD_Justificativa()));
             }
 
         } catch (Exception ex) {
+            /*Mensagem de erro*/
             JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
         }
     }//GEN-LAST:event_comboJustificativasActionPerformed
 
     private void cadastrarAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cadastrarAActionPerformed
         try {
+            /*Vai pegar os textos e itens que forma colocados pelo usuario e passa para uma variavel*/
             String CodAluno = txtIdAluno.getText().trim();
             String NomeAluno = txtNomeAluno.getText().trim();
             String TotPontos = txtQtdPontos.getText().trim();
             String Just = (String) comboJustificativas.getSelectedItem();
             String EdtPontos = txtPontos.getText().trim();
             
+            /*Garante que a justificativa "Novo aluno" não seja usada (Já é usada automaticamente ao cadastrar o aluno)*/
             if (String.valueOf(comboJustificativas.getSelectedItem()).equals("Novo aluno")){
                 
             JOptionPane.showMessageDialog(rootPane, "Não é possivel utilizar a justivificativa novo aluno, pois o aluno já está cadastrado");
@@ -291,56 +323,78 @@ public class MudarPontos extends javax.swing.JFrame {
             }
             else{
             
+            /*Validação para garantir que os pontos não são iguais a 0*/
             if (EdtPontos.equals("0")){
               JOptionPane.showMessageDialog(rootPane, "Não é possivel cadastrar 0 pontos!");
               return;
             }
             
+            /*Validação para que não haja nenhum campo vazio*/
             if (CodAluno.isEmpty() || NomeAluno.isEmpty() || TotPontos.isEmpty() || Just.isEmpty() || EdtPontos.isEmpty()) {
                 JOptionPane.showMessageDialog(rootPane, "Todos os campos devem ser preenchidos!");
                 return;
             }
              
+            /*declara uma varíavel para o Id do aluno*/
             int idAluno;
             try {
 
+                /*Armazena o id do aluno na caixa de texto na variável criada*/
                 idAluno = Integer.parseInt(CodAluno);
 
             } catch (NumberFormatException nfe) {
+                /*Mensagem de erro caso o Id inserido seja inválido*/
                 JOptionPane.showMessageDialog(rootPane, "O campo de Id do aluno deve ser um número válido!");
                 return;
             }
+            
+            /*declara uma varíavel para os pontos adicionados/removidos*/
             Double PontosAlt;
             try {
+                
+                /*Armazena os pontos adicionados/removidos na caixa de texto na variável criada*/
                 PontosAlt = Double.parseDouble(EdtPontos);
 
             } catch (NumberFormatException nfe) {
+                
+                /*Mensagem de erro caso os pontos adicionados/removidos seja inválido*/
                 JOptionPane.showMessageDialog(rootPane, "O campo de Pontos deve ser um número válido!");
                 return;
             }
-            /*Converter Int em Double é sempre uma vlidação segura, ou seja, não há
+            /*Converter Int em Double é sempre uma validação segura, ou seja, não há
             necessidade de verificação (se for pra dar erro vai dar antes)*/
             double Points = PontosAlt;
 
+            /*Instancia e cria o objeto Conjustificativa*/
             ConJustificativa conJust = new ConJustificativa();
+            
+            /*Instancia e cria o objeto Justificativa*/
             Justificativa just = new Justificativa();
 
+            /*Instancia e cria o objeto Pontos*/
             Pontos pontos = new Pontos();
+            
+            /*Instancia e cria o objeto Conpontos*/
             ConPontos conPontos = new ConPontos();
 
+            /*Puxa uma justificativa a partir do motivo dela*/
             just = conJust.retornaJust(Just);
 
+            /*Envia para Pontos, rspectivamente, as informações: id da justificativa, qtd de pobtos adicinados/removidos, e id do aluno */
             pontos.setCOD_Justificativa(just.getID_Justificativa());
             pontos.setQTD_Pontos(Points);
             pontos.setCOD_Aluno(idAluno);
 
+            /*faz o cadastro das alterações de pontos*/
             conPontos.cadastroPontos(pontos.getCOD_Justificativa(), pontos.getQTD_Pontos(), pontos.getCOD_Aluno());
 
+            /*Informa que o cadastro deu certo*/
             JOptionPane.showMessageDialog(rootPane, "Registro Cadastrado com Sucesso!!");
             
           }
         } catch (Exception ex) {
 
+            /*Informa que algo deu errado*/
             JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex.getMessage());
 
         }
@@ -370,19 +424,31 @@ public class MudarPontos extends javax.swing.JFrame {
 
     public void PreencherCombo() {
         try {
+            /*Instancia e cria o objeto Conustificativa*/
             ConJustificativa conJust = new ConJustificativa();
+            
+            /*cria um vetor para listar as justificativas*/
             Vector lista = conJust.RetornaJusts();
 
+            /*Remove todos os itens da ComboBox, para adicionar novamente e não haver repetições com os adicionados anteriormente*/
             comboJustificativas.removeAllItems();
 
+            /*Repetição para adicionar cada item do vetor*/
             for (int i = 0; i < lista.size(); i++) {
+                
+                /*Pega uma justificativa*/
                 Vector linha = (Vector) lista.get(i);
 
+                /*Verifica o status da justificativa*/
                 String status = String.valueOf(linha.get(5));
 
+                /*Verifica se a justificativa está ativa*/
                 if (!"false".equalsIgnoreCase(status)) {
+                    /*Garante que a justificativa "Novo Aluno" não apareça (Ela já e usada automaticamente com o cadastro do aluno, e não deve ser usada múltiplas vezes)*/
                     if (!linha.get(4).equals("Novo aluno")) {
+                        /*Pega o motivo da justificativa*/
                         String motivo = String.valueOf(linha.get(4));
+                        /*Adicona a justificativa na combobox*/
                         comboJustificativas.addItem(motivo);
                     }
                     
@@ -390,6 +456,7 @@ public class MudarPontos extends javax.swing.JFrame {
             }
 
         } catch (Exception ex) {
+            /*Mensagem de erro*/
             JOptionPane.showMessageDialog(rootPane, "Erro ao preencher combo: " + ex.getMessage());
         }
     }
@@ -412,7 +479,7 @@ public class MudarPontos extends javax.swing.JFrame {
     private javax.swing.JTextField txtQtdPontos;
     // End of variables declaration//GEN-END:variables
     private void adicionarHintText() {
-
+        //Hint do campo IdAluno
         txtIdAluno.setText("Insira o Id do Aluno");
         txtIdAluno.setForeground(Color.GRAY);
 

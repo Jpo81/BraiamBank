@@ -16,20 +16,23 @@ import javax.swing.JOptionPane;
  * @author Miguel
  */
 public class RelatorioGerar extends javax.swing.JFrame {
-
+    //declara um logger estático e imutável associado à classe RelatorioGerar
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(RelatorioGerar.class.getName());
 
     /**
      * Creates new form RelatorioGerar
      */
     public RelatorioGerar() {
+        //validação para garantir que o user está logado
         if (Session.getInstancia().getProfessorLogado() == null) {
             JOptionPane.showMessageDialog(rootPane, "Não é possivel acessar essa tela sem realizar o login, o programa será encerrado por segurança");
             System.exit(0);
         }
+        /*Adiciona o icone na janela */
         ImageIcon icon = new ImageIcon(BrianBank.class.getResource("/assets/icons/bblogo.png"));
         setIconImage(icon.getImage());
         
+        /*Carrega os componentes da tela*/
         initComponents();
     }
 
@@ -75,17 +78,26 @@ public class RelatorioGerar extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    //botão de gerar relatório
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
         try {
+            //cria um JoptionPane para confirmar a geração dos relatórios
             int op = JOptionPane.showConfirmDialog(rootPane, "Deseja realmente gerar os relatorios ?", "Confirmar", JOptionPane.YES_NO_OPTION);
             if (op == JOptionPane.YES_OPTION) {
+                
+                /*Instanciando e criando o objeto Conrelatorio*/
+                
                 ConRelatorio conRelatorio = new ConRelatorio();
+                
+                //Chama a função criadora de relatórios
                 conRelatorio.gerarRelatorioPorProfessor();
+                
+                //JOptionPane informando em que pasta o relatório foi salvo
                 JOptionPane.showMessageDialog(rootPane, "Relatorios salvos da pasta Dowloads");
             }
 
         } catch (Exception ex) {
+            //Mensagem de erro
             JOptionPane.showMessageDialog(rootPane, "Ocorreu um ERRO:" + ex);
         }
     }//GEN-LAST:event_jToggleButton1ActionPerformed

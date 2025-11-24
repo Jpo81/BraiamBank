@@ -308,9 +308,12 @@ public class CadTurma extends javax.swing.JFrame {
                 int id;
                 try {
                     id = Integer.parseInt(txtIdTurma.getText());
-                    conTurma.excluir(id);
-                    /*Mensagem de sucesso*/
-                    JOptionPane.showMessageDialog(rootPane, "Registro atualizado com sucesso!!!");
+                    boolean confirm = conTurma.excluir(id);
+                    if (confirm) {
+                        /*Mensagem de sucesso*/
+                        JOptionPane.showMessageDialog(rootPane, "Registro atualizado com sucesso!!!");
+                    }
+                    
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(rootPane, "Id invalido!");
 

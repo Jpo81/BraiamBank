@@ -54,10 +54,12 @@ public class ConAluno {
                 /*Mensagem de erro*/
                 if (ex instanceof SQLIntegrityConstraintViolationException) {
                     JOptionPane.showMessageDialog(null, "Esse aluno já existe");
+                    conexao.desconectar();
                     return false;
                 } else {
                     /*Mensagem de erro*/
                     JOptionPane.showMessageDialog(null, "Ocorreu um ERRO:" + ex);
+                    conexao.desconectar();
                     return false;
                 }
             }
@@ -99,6 +101,7 @@ public class ConAluno {
             } catch (SQLException ex) {
                 /*Mensagem de erro se não der pra pesquisar*/
                 JOptionPane.showMessageDialog(null, ex);
+                conexao.desconectar();
                 return null;
             }
         } else {
@@ -128,17 +131,27 @@ public class ConAluno {
                 psmt.setInt(4, aluno.getCOD_Turma());
                 psmt.setInt(5, aluno.getRM_Aluno());
                 psmt.setInt(6, aluno.getID_Aluno());
-                psmt.executeUpdate();
+                int altera = psmt.executeUpdate();
                 conexao.desconectar();
                 
-                return true;
+                if (altera != 0 ) {
+                    System.out.println("Edição realizada com sucesso");
+                    return true;
+                } else {
+                    JOptionPane.showMessageDialog(null, "nenhum registro encontrado");
+                    return false;
+                }
+                
+                
             } catch (SQLException ex) {
                 /*Mensagem de erro*/
                if (ex instanceof SQLIntegrityConstraintViolationException) {
                     JOptionPane.showMessageDialog(null, "Já existe um aluno com este rm nesta turma");
+                    conexao.desconectar();
                     return false;
                 } else {
                     JOptionPane.showMessageDialog(null, "Ocorreu um ERRO:" + ex);
+                    conexao.desconectar();
                     return false;
                 }
             }
@@ -152,7 +165,7 @@ public class ConAluno {
     }
 
     /*Exclui um aluno do banco pelo ID*/
-    public void excluir(int ID) {
+    public boolean excluir(int ID) {
         /*Vendo se o user está logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
@@ -163,19 +176,32 @@ public class ConAluno {
                 /*Se conectnado ao banco, executando comando e desconectando*/
                 PreparedStatement psmt = conexao.conectar().prepareStatement(sql);
                 psmt.setInt(1, ID);
-                psmt.executeUpdate();
+                int altera = psmt.executeUpdate();
                 conexao.desconectar();
+                
+                if (altera != 0) {
+                    System.out.println("Exclusão realizada com exito");
+                    return true;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Nenhum registro encontrado");
+                    return false;
+                }
+                
 
             } catch (SQLException ex) {
                 /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Ocorreu um erro:" + ex);
+                conexao.desconectar();
+                return false;
             }
         } else {
             /*Mensagem de erro por não estar logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel excluir o aluno pois você não está logado(a)");
             System.exit(0);
+            
 
         }
+        return false;
 
     }
 
@@ -225,6 +251,7 @@ public class ConAluno {
             } catch (SQLException ex) {
                 /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Ocorreu um erro:" + ex);
+                conexao.desconectar();
 
             }
             return lista;

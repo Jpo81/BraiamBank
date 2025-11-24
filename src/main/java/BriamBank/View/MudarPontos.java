@@ -386,10 +386,12 @@ public class MudarPontos extends javax.swing.JFrame {
             pontos.setCOD_Aluno(idAluno);
 
             /*faz o cadastro das alterações de pontos*/
-            conPontos.cadastroPontos(pontos.getCOD_Justificativa(), pontos.getQTD_Pontos(), pontos.getCOD_Aluno());
+            Boolean confirm = conPontos.cadastroPontos(pontos.getCOD_Justificativa(), pontos.getQTD_Pontos(), pontos.getCOD_Aluno());
+            if (confirm) {
+                /*Informa que o cadastro deu certo*/
+                JOptionPane.showMessageDialog(rootPane, "Registro Cadastrado com Sucesso!!");
 
-            /*Informa que o cadastro deu certo*/
-            JOptionPane.showMessageDialog(rootPane, "Registro Cadastrado com Sucesso!!");
+            }
             
           }
         } catch (Exception ex) {

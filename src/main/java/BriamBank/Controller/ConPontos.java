@@ -33,7 +33,7 @@ Cod_Justificativa INTEGER NOT NULL REFERENCES Justificativas(IdJustificativa)
     Conexao conexao = new Conexao();
 
     /*Cadastra pontos pra um aluno com base numa justificativa*/
-    public void cadastroPontos(int codJustificativa, double qtdPontos, int CodAluno) {
+    public boolean cadastroPontos(int codJustificativa, double qtdPontos, int CodAluno) {
         /*Vendo se o user ta logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
@@ -56,16 +56,19 @@ Cod_Justificativa INTEGER NOT NULL REFERENCES Justificativas(IdJustificativa)
                 conexao.desconectar();
 
                 System.out.println("Cadstro de ponto realizado com sucesso");
-
+                return true;
             } catch (SQLException ex) {
                 /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Ocorreu um ERRO:" + ex);
+                conexao.desconectar();
+                return false;
             }
 
         } else {
             /*Mensagem de erro por não estar logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel efetuar o cadastro de pontos pois você não está logado(a)");
             System.exit(0);
+            return false;
         }
 
     }
@@ -109,6 +112,7 @@ Cod_Justificativa INTEGER NOT NULL REFERENCES Justificativas(IdJustificativa)
             } catch (SQLException ex) {
                 /*Mensagem de erro se não der pra pesquisar*/
                 JOptionPane.showMessageDialog(null, ex);
+                conexao.desconectar();
                 return null;
             }
 

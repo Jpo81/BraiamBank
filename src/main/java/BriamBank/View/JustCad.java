@@ -320,11 +320,15 @@ public class JustCad extends javax.swing.JFrame {
                     ConJustificativa conJust = new ConJustificativa();
 
                     /*Pega o id do aluno pesquisado, e usa para excluir*/
-                    conJust.ExcluirJust(id);
+                    Boolean confirm = conJust.ExcluirJust(id);
+                    
+                    if (confirm) {
+                        /*Mensagem de sucesso*/
+                        JOptionPane.showMessageDialog(rootPane, "Registro atualizado com sucesso!!!");
+                        listar();
+                    }
 
-                    /*Mensagem de sucesso*/
-                    JOptionPane.showMessageDialog(rootPane, "Registro atualizado com sucesso!!!");
-                    listar();
+                    
                 }
             }
         } catch (Exception ex) {

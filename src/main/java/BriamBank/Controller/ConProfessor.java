@@ -81,10 +81,12 @@ public class ConProfessor {
             if (ex instanceof SQLIntegrityConstraintViolationException) {
                 /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Erro ao cadastrar. RM ou Email já existe!");
+                conn.desconectar();
                 return false;
             } else {
                 /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Erro ao cadastrar professor: " + ex.getMessage());
+                conn.desconectar();
 
                 return false;
             }
@@ -120,6 +122,7 @@ public class ConProfessor {
             } catch (SQLException ex) {
                 /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Erro ao atualizar professor: " + ex.getMessage());
+                conn.desconectar();
                 return false;
             }
         
@@ -149,6 +152,7 @@ public class ConProfessor {
             } catch (SQLException ex) {
                 /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Erro ao excluir professor: " + ex.getMessage());
+                conn.desconectar();
                 System.exit(0);
                 return false;
             }

@@ -57,6 +57,7 @@ public class ConTurma {
             } catch (SQLException ex) {
                 /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Erro ao listar turmas do professor: " + ex.getMessage());
+                conn.desconectar();
                 return lista;
             }
             return lista;
@@ -103,6 +104,7 @@ public class ConTurma {
             } catch (SQLException ex) {
                 /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Erro procurar dados da turma" + ex.getMessage());
+                conn.desconectar();
                 return null;
             }
             return turma;
@@ -154,6 +156,7 @@ public class ConTurma {
             } catch (SQLException ex) {
                 /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Erro ao procurar dados da turma: " + ex.getMessage());
+                conn.desconectar();
                 return null;
             }
 
@@ -203,9 +206,11 @@ public class ConTurma {
                 /*Mensagem de erro*/
                 if (ex instanceof SQLIntegrityConstraintViolationException) {
                     JOptionPane.showMessageDialog(null, "Essa turma já existe");
+                    conn.desconectar();
                     return false;
                 } else {
                     JOptionPane.showMessageDialog(null, "Ocorreu um ERRO:" + ex);
+                    conn.desconectar();
                     return false;
                 }
                 
@@ -249,6 +254,7 @@ public class ConTurma {
             } catch (SQLException ex) {
                 /*Mensagem de erro se não der pra pesquisar*/
                 JOptionPane.showMessageDialog(null, ex);
+                conn.desconectar();
                 return null;
             }
         } else {
@@ -260,7 +266,7 @@ public class ConTurma {
     }
 
     /*Exclui uma turma do banco pelo ID*/
-    public void excluir(int ID) {
+    public boolean excluir(int ID) {
         /*Vendo se o user está logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
@@ -272,18 +278,30 @@ public class ConTurma {
                 PreparedStatement psmt = conn.conectar().prepareStatement(sql);
                 psmt.setInt(1, ID);
                 psmt.setInt(2, prof.getRM_Professor());
-                psmt.executeUpdate();
+                int altera = psmt.executeUpdate();
                 conn.desconectar();
+                
+                if (altera != 0) {
+                    System.out.println("Exclusão realizada com exito");
+                    return true;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Nenhum registro encontrado");
+                    return false;
+                }
 
             } catch (SQLException ex) {
                 /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Ocorreu um erro:" + ex);
+                conn.desconectar();
+                return false;
             }
         } else {
             /*Mensagem de erro por não estar logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel excluir o aluno pois você não está logado(a)");
             System.exit(0);
+            
         }
+        return false;
     }
 
     /*Edita os dados de uma turma ja existente*/
@@ -308,16 +326,26 @@ public class ConTurma {
                 psmt.setString(5, turma.getNOME_Turma());
                 psmt.setInt(6, turma.getID_Turma());
                 psmt.setInt(7, prof.getRM_Professor());
-                psmt.executeUpdate();
+                int altera = psmt.executeUpdate();
                 conn.desconectar();
+                
+                if (altera != 0) {
+                    System.out.println("Edição realizada com sucesso");
+                    return true;
+                }  else {
+                    JOptionPane.showMessageDialog(null, "Nenhum registro encontrado");
+                }
+                
                 return true;
             } catch (SQLException ex) {
                 /*Mensagem de erro*/
                 if (ex instanceof SQLIntegrityConstraintViolationException) {
                     JOptionPane.showMessageDialog(null, "Essa turma já existe");
+                    conn.desconectar();
                     return false;
                 } else {
                     JOptionPane.showMessageDialog(null, "Ocorreu um ERRO:" + ex);
+                    conn.desconectar();
                     return false;
                 }
             }
@@ -368,6 +396,7 @@ public class ConTurma {
             } catch (SQLException ex) {
                 /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Erro ao procurar dados da turma: " + ex.getMessage());
+                conn.desconectar();
                 return turmas;
             }
 

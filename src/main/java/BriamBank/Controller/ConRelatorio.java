@@ -165,7 +165,7 @@ public class ConRelatorio {
             } catch (Exception e) {
                 /*Mensagem de erro*/
                 System.out.println("Erro ao gerar relatórios: " + e.getMessage());
-                e.printStackTrace();
+                
             } finally {
                 conexao.desconectar();
             }

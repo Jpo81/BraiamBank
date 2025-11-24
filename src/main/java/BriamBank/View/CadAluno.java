@@ -409,9 +409,13 @@ public class CadAluno extends javax.swing.JFrame {
                     
                 /*Pega o id e exclui o aluno*/
                 int id = Integer.parseInt(txtIdAluno.getText());
-                conAluno.excluir(id);
+                Boolean confirm = conAluno.excluir(id);
+                
+                if (confirm) {
+                    JOptionPane.showMessageDialog(rootPane, "Registro atualizado com sucesso!!!");
+                }
 
-                JOptionPane.showMessageDialog(rootPane, "Registro atualizado com sucesso!!!");
+                
             }
 
         } catch (Exception ex) {

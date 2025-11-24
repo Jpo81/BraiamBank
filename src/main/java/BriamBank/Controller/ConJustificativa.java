@@ -204,6 +204,7 @@ public class ConJustificativa {
                 /*Mensagem de erro*/
                 if (ex instanceof SQLIntegrityConstraintViolationException) {
                     JOptionPane.showMessageDialog(null, "Esse motivo já existe");
+                    conn.desconectar();
                     return false;
                 } else {
                     JOptionPane.showMessageDialog(null, "Não foi possivel realizar o cadastro da justificativa");
@@ -250,16 +251,22 @@ public class ConJustificativa {
                 stmt.setString(4, dataHoraMySQL);
                 stmt.setBoolean(5, status);
                 stmt.setInt(6, id);
-                stmt.executeUpdate();
+                int altera = stmt.executeUpdate();
 
                 conn.desconectar();
-
-                System.out.println("Edição de Justificativa realizado com sucesso!");
-                return true;
+                if (altera != 0){
+                    System.out.println("Edição de Justificativa realizado com sucesso!");
+                    return true;
+                } else {
+                    JOptionPane.showMessageDialog(null, "nenhum registro encontrado");
+                    return false;
+                }
+                
             } catch (SQLException ex) {
                 /*Mensagem de erro*/
                 if (ex instanceof SQLIntegrityConstraintViolationException) {
                     JOptionPane.showMessageDialog(null, "Esse motivo já existe");
+                    conn.desconectar();
                     return false;
                 } else {
                     JOptionPane.showMessageDialog(null, "Não foi possivel realizar a edição da justificativa");
@@ -276,7 +283,7 @@ public class ConJustificativa {
     }
 
     /*Exclui uma justificativa do banco pelo ID*/
-    public void ExcluirJust(int id) {
+    public boolean ExcluirJust(int id) {
         /*Vendo se o user está logado*/
         Professor prof = Session.getInstancia().getProfessorLogado();
 
@@ -290,19 +297,28 @@ public class ConJustificativa {
                 /*Se conectnado ao banco, executando comando e desconectando*/
                 PreparedStatement stmt = conn.conectar().prepareStatement(sql);
                 stmt.setInt(1, id);
-                stmt.executeUpdate();
+                int altera = stmt.executeUpdate();
+                
                 conn.desconectar();
-
-                System.out.println("Exclusão de Justificativa realizada com sucesso!");
+                if (altera != 0) {
+                    System.out.println("Exclusão de Justificativa realizada com sucesso!");
+                    return true;
+                } else {
+                    JOptionPane.showMessageDialog(null, "nenhum registro encontrado");
+                    return false;
+                }
+                
             } catch (SQLException ex) {
                 /*Mensagem de erro*/
                 JOptionPane.showMessageDialog(null, "Não foi possivel realizar a exclusão da justificativa");
                 conn.desconectar();
+                return false;
             }
         } else {
             /*Mensagem de erro por não estar logado*/
             JOptionPane.showMessageDialog(null, "Não foi possivel realizar a exclusão pois voce não esta logado");
             System.exit(0);
+            return false;
         }
     }
 

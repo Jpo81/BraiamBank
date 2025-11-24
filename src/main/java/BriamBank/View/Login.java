@@ -21,17 +21,24 @@ import javax.swing.text.*;
  */
 public class Login extends javax.swing.JFrame {
 
+    //declara um logger estático e imutável associado à classe Login
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Login.class.getName());
 
     /**
      * Creates new form Loguin
      */
     public Login() {
+        /*Adiciona o icone na janela */
         ImageIcon icon = new ImageIcon(BrianBank.class.getResource("/assets/icons/bblogo.png"));
         setIconImage(icon.getImage());
+
+        /*Carrega os componentes da tela*/
         initComponents();
+
+        /*Adiciona os hints nos campos de texto*/
         adicionarHintText();
 
+        /*Quando a tela fechar vai dar foco na jLabel1*/
         java.awt.EventQueue.invokeLater(() -> {
             jLabel1.requestFocusInWindow();
         });
@@ -137,64 +144,88 @@ public class Login extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+   /*Btn de logar*/
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         try {
+            /*Pega o valor posto em ambos os campos   */
             String rmText = txtRM.getText().trim();
             String senha = new String(txtSenha.getPassword()).trim();
-            if (senha.equals("Admin") && rmText.equals("Admin")) {
+
+            if (rmText.equals("Admin") && senha.equals("Admin")) {
+                /*Chama atela MenuTurma*/
                 Admin novaTela = new Admin();
                 novaTela.setVisible(true);
+                /*Apaga tela atual*/
+                this.dispose();
+                return;
+
+            }
+
+            /*Garante que nenhum deles esteja vazio*/
+            if (rmText.isEmpty() || rmText.equals("Digite seu RM")
+                    || senha.isEmpty() || senha.equals("Digite sua senha")) {
+
+                /*Mensagem pedindo para preencher os campos*/
+                JOptionPane.showMessageDialog(rootPane, "Todos os campos devem estar preenchidos");
+                return;
+                /*Caso o RM não cotenha apenas números*/
+            } else if (!rmText.matches("\\d+")) {
+                JOptionPane.showMessageDialog(rootPane, "O RM deve conter apenas números!");
+                return;
+                /*Se o RM não tiver exatamente 5 digitos*/
+            } else if (rmText.length() != 5) {
+                JOptionPane.showMessageDialog(rootPane, "O RM deve ter exatamente 5 dígitos.");
+                return;
+                /*Se a senha não estiver no intervalo de 8 e 32 caracteres*/
+            } else if (senha.length() < 8 || senha.length() > 32) {
+                JOptionPane.showMessageDialog(rootPane, "A senha deve ter entre 8 e 32 caracteres");
+                return;
+            }
+
+            /*Atribui o valor do RM digitado á variavel rm*/
+            int rm = Integer.parseInt(rmText);
+
+            /*Instancia respectivamente os objetos: Conprofessor e Professor*/
+            ConProfessor con = new ConProfessor();
+            Professor prof = new Professor();
+
+            /*Seta o RM e senha do professor como o que teve as informações inseridas*/
+            prof.setRM_Professor(rm);
+            prof.setSENHA_Professor(senha);
+
+            /*Vê se as informações inseridas conferem, se não retorna null*/
+            prof = con.logar(prof);
+
+            /*Se prof for NÃO null, então ele existe e suas informções batem*/
+            if (prof != null) {
+                /*Informa que deu certo e diz que usuário foi logado*/
+                JOptionPane.showMessageDialog(rootPane,
+                        "Login realizado com sucesso! Bem-vindo(a): " + prof.getNome_Professor());
+                /*Chama atela MenuTurma*/
+                MenuTurma novaTela = new MenuTurma();
+                novaTela.setVisible(true);
+                /*Apaga tela atual*/
                 this.dispose();
             } else {
-                if (rmText.isEmpty() || rmText.equals("Digite seu RM")
-                        || senha.isEmpty() || senha.equals("Digite sua senha")) {
-
-                    JOptionPane.showMessageDialog(rootPane, "Todos os campos devem estar preenchidos");
-                    return;
-                } else if (!rmText.matches("\\d+")) {
-                    JOptionPane.showMessageDialog(rootPane, "O RM deve conter apenas números!");
-                    return;
-                } else if (rmText.length() != 5) {
-                    JOptionPane.showMessageDialog(rootPane, "RM inválido! Deve ter exatamente 5 dígitos.");
-                    return;
-                } else if (senha.length() < 8 || senha.length() > 32) {
-                    JOptionPane.showMessageDialog(rootPane, "A senha deve ter entre 8 e 32 caracteres");
-                    return;
-                }
-
-                int rm = Integer.parseInt(rmText);
-
-                ConProfessor con = new ConProfessor();
-                Professor prof = new Professor();
-                prof.setRM_Professor(rm);
-                prof.setSENHA_Professor(senha);
-
-                prof = con.logar(prof);
-
-                if (prof != null) {
-                    JOptionPane.showMessageDialog(rootPane,
-                            "Login realizado com sucesso! Bem-vindo(a): " + prof.getNome_Professor());
-                    MenuTurma novaTela = new MenuTurma();
-                    novaTela.setVisible(true);
-                    this.dispose();
-                } else {
-                    JOptionPane.showMessageDialog(rootPane, "RM ou Senha incorretos");
-                }
+                /*Caso as informaçõe snão baterem*/
+                JOptionPane.showMessageDialog(rootPane, "RM ou Senha incorretos");
             }
-            
 
         } catch (Exception ex) {
+            /*Caso ocorra algum outro erro*/
             JOptionPane.showMessageDialog(rootPane, "Um erro inesperado ocorreu: " + ex.getMessage());
         }
     }//GEN-LAST:event_jButton2ActionPerformed
-
+    /*Botão de cadastrar*/
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         try {
+            /*Chama a tela CadastroProfessor*/
             CadastroProfessor novaTela = new CadastroProfessor();
             novaTela.setVisible(true);
+            /*Apaga a tela atual*/
             this.dispose();
         } catch (Exception ex) {
+            /*Mensagem de erro*/
             JOptionPane.showMessageDialog(rootPane, "Um erro inesperado ocorreu: " + ex.getMessage());
         }
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -202,14 +233,17 @@ public class Login extends javax.swing.JFrame {
     private void txtSenhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSenhaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSenhaActionPerformed
-
+    /*Btn de revelar/esconder senha*/
     private void btnSenha1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSenha1ActionPerformed
         try {
+            /*EcgoChar é o caractere usado para mascarar a senha, getEchoChar retorna o caracter usado, se for o mesmo, executa o if*/
             if (txtSenha.getEchoChar() == '•') {
                 txtSenha.setEchoChar((char) 0); //Desativa a mascara
+                /*muda a imagem do botão de revelar/esconder senha*/
                 btnSenha1.setIcon(new ImageIcon(getClass().getResource("/assets/icons/hide.png")));
             } else {
                 txtSenha.setEchoChar('•'); // volta a mascarar
+                /*muda aimagem do botão de revelar/esconder senha*/
                 btnSenha1.setIcon(new ImageIcon(getClass().getResource("/assets/icons/view.png")));
             }
 

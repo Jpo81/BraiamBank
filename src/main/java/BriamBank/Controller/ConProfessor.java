@@ -114,7 +114,7 @@ public class ConProfessor {
                     System.out.println("Professor atualizado com sucesso!");
                     return true;
                 } else {
-                    System.out.println("Nenhum professor encontrado com esse RM.");
+                    JOptionPane.showMessageDialog(null, "Nenhum professor encontrado com esse RM.");
                     return false;
                 }
             } catch (SQLException ex) {

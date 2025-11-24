@@ -388,41 +388,54 @@ public class JustCad extends javax.swing.JFrame {
     }//GEN-LAST:event_editarTActionPerformed
 
     private void pesquisarTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pesquisarTActionPerformed
-        try {
-            String Id = txtTurma.getText().trim();
-
-            int id;
             try {
-                id = Integer.parseInt(Id);
-            } catch (NumberFormatException nfe) {
-                JOptionPane.showMessageDialog(rootPane, "O campo IdTurma deve ser um numero valido!");
-                return;
-            }
+        // Captura o texto digitado no campo de ID e remove espaços extras
+        String Id = txtTurma.getText().trim();
 
-            ConJustificativa conJust = new ConJustificativa();
-
-            Justificativa just = conJust.retornaJust(id);
-
-            if (just.getSTATUS_Just() != null) {
-                String status;
-                if (just.getSTATUS_Just() == false) {
-                    status = "Inativo";
-                } else {
-                    status = "Ativo";
-                }
-
-                txtMotivo.setText(just.getMOTIVO_Justificativa());
-                ComboStatus.setSelectedItem(status);
-                txtDesc.setText(just.getDESC_Justificativa());
-                txtQtd.setText(String.valueOf(just.getQTD_Justificativa()));
-            } else {
-                JOptionPane.showMessageDialog(rootPane, "Justificativa não encontrada");
-            }
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
-            txtTurma.setText("");
+        int id;
+        try {
+            // Tenta converter o valor digitado para número inteiro
+            id = Integer.parseInt(Id);
+        } catch (NumberFormatException nfe) {
+            // Caso o valor não seja um número, mostra erro e interrompe o processo
+            JOptionPane.showMessageDialog(rootPane, "O campo IdTurma deve ser um numero valido!");
+            return;
         }
+
+        // Cria o controlador responsável por acessar as justificativas no banco
+        ConJustificativa conJust = new ConJustificativa();
+
+        // Busca no banco a justificativa referente ao ID informado
+        Justificativa just = conJust.retornaJust(id);
+
+        // Verifica se a justificativa retornou um status (se existir no banco)
+        if (just.getSTATUS_Just() != null) {
+
+            // Converte o valor booleano em texto para exibir no ComboBox
+            String status;
+            if (just.getSTATUS_Just() == false) {
+                status = "Inativo";
+            } else {
+                status = "Ativo";
+            }
+
+            // Preenche os campos da interface com os dados retornados do banco
+            txtMotivo.setText(just.getMOTIVO_Justificativa());
+            ComboStatus.setSelectedItem(status);
+            txtDesc.setText(just.getDESC_Justificativa());
+            txtQtd.setText(String.valueOf(just.getQTD_Justificativa()));
+
+        } else {
+            // Caso a justificativa não exista no banco
+            JOptionPane.showMessageDialog(rootPane, "Justificativa não encontrada");
+        }
+
+    } catch (Exception ex) {
+        // Trata qualquer erro inesperado durante o processo de consulta
+        JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
+        txtTurma.setText(""); // Limpa o campo de entrada
+    }
+
     }//GEN-LAST:event_pesquisarTActionPerformed
 
     private void ComboStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComboStatusActionPerformed
@@ -473,8 +486,9 @@ public class JustCad extends javax.swing.JFrame {
     private javax.swing.JTextField txtTurma;
     // End of variables declaration//GEN-END:variables
     public void listar() {
-        Vector cabecalho = new Vector();
+    Vector cabecalho = new Vector();
         try {
+            // Define os nomes das colunas da tabela
             cabecalho.addElement("IdJust");
             cabecalho.addElement("Data");
             cabecalho.addElement("Quantidade");
@@ -482,26 +496,33 @@ public class JustCad extends javax.swing.JFrame {
             cabecalho.addElement("Motivo");
             cabecalho.addElement("Status");
 
+            // Controlador responsável por buscar as justificativas no banco
             ConJustificativa conJust = new ConJustificativa();
+
+            // Verifica se houve falha ao tentar buscar os dados
             if (conJust.RetornaJusts() == null) {
                 JOptionPane.showMessageDialog(rootPane, "Ocorreu uma falha durante a exibição dos dados, tente novamente mais tarde");
             }
 
+            // Atualiza a tabela com os dados retornados do banco
             jTable1.setModel(new DefaultTableModel(conJust.RetornaJusts(), cabecalho));
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(rootPane, "Ocorreu uma falha durante a exibição dos dados, tente novamente mais tarde");
 
+        } catch (Exception ex) {
+            // Caso ocorra um erro inesperado durante a listagem
+            JOptionPane.showMessageDialog(rootPane, "Ocorreu uma falha durante a exibição dos dados, tente novamente mais tarde");
         }
-    }
+}
 
     private void adicionarHintText() {
 
+        // Configura texto de dica para txtTurma
         txtTurma.setText("Insira o Id da Justificativa");
         txtTurma.setForeground(Color.GRAY);
 
         txtTurma.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent e) {
+                // Remove a dica quando o usuário clica no campo
                 if (txtTurma.getText().equals("Insira o Id da Justificativa")) {
                     txtTurma.setText("");
                     txtTurma.setForeground(Color.BLACK);
@@ -510,6 +531,7 @@ public class JustCad extends javax.swing.JFrame {
 
             @Override
             public void focusLost(java.awt.event.FocusEvent e) {
+                // Restaura a dica caso o campo fique vazio
                 if (txtTurma.getText().isEmpty()) {
                     txtTurma.setText("Insira o Id da Justificativa");
                     txtTurma.setForeground(Color.GRAY);
@@ -517,6 +539,7 @@ public class JustCad extends javax.swing.JFrame {
             }
         });
 
+        // Configura texto de dica para txtMotivo
         txtMotivo.setText("Insira o motivo");
         txtMotivo.setForeground(Color.GRAY);
 
@@ -538,6 +561,7 @@ public class JustCad extends javax.swing.JFrame {
             }
         });
 
+        // Configura texto de dica para txtDesc
         txtDesc.setText("Insira a descrição");
         txtDesc.setForeground(Color.GRAY);
 
@@ -559,6 +583,7 @@ public class JustCad extends javax.swing.JFrame {
             }
         });
 
+        // Configura texto de dica para txtQtd
         txtQtd.setText("Insira a quantidade de pontos");
         txtQtd.setForeground(Color.GRAY);
 
@@ -579,5 +604,5 @@ public class JustCad extends javax.swing.JFrame {
                 }
             }
         });
-    }
+      }
 }

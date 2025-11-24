@@ -76,7 +76,7 @@ public class JCardTurma extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 GrupoMenu grupoMenu = new GrupoMenu(turma);
                 grupoMenu.setVisible(true);
-
+                System.out.println(turma);
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(JCardTurma.this);
                 frame.dispose();
             }

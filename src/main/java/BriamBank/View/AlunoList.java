@@ -19,43 +19,63 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author kauax
  */
+
 public class AlunoList extends javax.swing.JFrame {
 
+    /*Guarda o id da turma*/
     private int CodTurma;
-
+    
+    /*Guarda registros de erros*/
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AlunoList.class.getName());
 
     /**
      * Creates new form AlunoList
      */
     public AlunoList() {
+        
+        /*Verifica se há um professor logaddo, se não há ele dá a mensagem*/
         if (Session.getInstancia().getProfessorLogado() == null) {
             JOptionPane.showMessageDialog(rootPane, "Não é possivel acessar essa tela sem realizar o login, o programa será encerrado por segurança");
             System.exit(0);
         }
+        
+        /*Define o icone da janela*/
         ImageIcon icon = new ImageIcon(BrianBank.class.getResource("/assets/icons/bblogo.png"));
         setIconImage(icon.getImage());
+        
+        /*Carrega oss componentes das telas*/
         initComponents();
         
+        /*Mensagem em caso de falha*/
         JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro ao tentar acessar a tela, tente novamente mais tarde");
     }
 
     public AlunoList(int CodTurma) {
+        
+        /*Verifica se há um professor logaddo, se não há ele dá a mensagem*/
         if (Session.getInstancia().getProfessorLogado() == null) {
             JOptionPane.showMessageDialog(rootPane, "Não é possivel acessar essa tela sem realizar o login");
             System.exit(0);
         }
+        
+        /*Define o icone da janela*/
         ImageIcon icon = new ImageIcon(BrianBank.class.getResource("/assets/icons/bblogo.png"));
         setIconImage(icon.getImage());
 
         
-
+        /*Armazena o codigo da turma*/
         this.CodTurma = CodTurma;
+        
+        /*Carrega oss componentes das telas*/
         initComponents();
+        
+        /*Instanciando e criando o objeto*/
         ConTurma conTurma = new ConTurma();
-
+        
+        /*Busca dados das turmas*/
         Turma turma = conTurma.retornaTurma(CodTurma);
-
+        
+        /*Pega os alunos e adiciona eles na lista de alunos*/
         jLabel9.setText("Alunos do " + turma.getCURSO_Turma() + "-" + turma.getGRUPO_Turma());
         listar(CodTurma);
 
@@ -179,6 +199,8 @@ public class AlunoList extends javax.swing.JFrame {
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
         try {
+            
+            /*atualiza a tabela com a lista de alunos*/
             listar(CodTurma);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro, ERRO: " + ex);
@@ -188,11 +210,14 @@ public class AlunoList extends javax.swing.JFrame {
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
         try {
             ConTurma conTurma = new ConTurma();
-
+            /*Busca dados dda turma atual*/
             Turma turma = conTurma.pesquisarID(String.valueOf(this.CodTurma));
-            //String nomeTurma, String nomeCurso, int CodTurma, String Grupo
+            
+            //Abre a tela de GrupoMenu
             GrupoMenu grupoMenu = new GrupoMenu(turma.getNOME_Turma());
             grupoMenu.setVisible(true);
+            
+            /*Fecha a tela atual*/
             this.dispose();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
@@ -202,9 +227,15 @@ public class AlunoList extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
             ConTurma conTurma = new ConTurma();
+            
+            /*Exclui o grupo no banco de dados*/
             conTurma.excluir(CodTurma);
+            
+            /*abre a tela principal de turmas*/
             MenuTurma novaTela = new MenuTurma();
             novaTela.setVisible(true);
+            
+            /*Fecha a tela atual*/
             this.dispose();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
@@ -245,16 +276,21 @@ public class AlunoList extends javax.swing.JFrame {
     public void listar(Integer CodTurma) {
         Vector cabecalho = new Vector();
         try {
+            
+            /*Cria o cabeçalho da tabela*/
             cabecalho.addElement("Id");
             cabecalho.addElement("Nome");
             cabecalho.addElement("Rm");
             cabecalho.addElement("Pontos");
-
+        
+            /*Instanciando e criando o objeto ConAluno*/
             ConAluno conAluno = new ConAluno();
             if (conAluno.listarPorTurma(CodTurma) == null) {
                 JOptionPane.showMessageDialog(rootPane, "Ocorreu uma falha durante a exibição dos dados, tente novamente mais tarde");
             }
-
+            
+            /*Chama listarPorTurma(CodTurma) para buscar os dados do banco
+            Coloca os dados dentro da tabela*/
             jTable1.setModel(new DefaultTableModel(conAluno.listarPorTurma(CodTurma), cabecalho));
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(rootPane, "Ocorreu uma falha durante a exibição dos dados, tente novamente mais tarde");

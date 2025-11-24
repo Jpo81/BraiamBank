@@ -30,36 +30,53 @@ public class MenuTurma extends javax.swing.JFrame {
      * Creates new form CadTurma
      */
     public MenuTurma() {
+        /*Garante que o user esteja logado*/
         if (Session.getInstancia().getProfessorLogado() == null) {
             JOptionPane.showMessageDialog(rootPane, "Não é possivel acessar essa tela sem realizar o login, o programa será encerrado por segurança");
             System.exit(0);
         }
+        /*Define o icone da janela*/
         ImageIcon icon = new ImageIcon(BrianBank.class.getResource("/assets/icons/bblogo.png"));
         setIconImage(icon.getImage());
 
+        /*Carrega os componentes da tela*/
         initComponents();
+        
+        
         try {
+            /*Instancia e cria o objeto Conturma*/
             ConTurma conTurma = new ConTurma();
+            
+            /*cria um vetor para listar as turmas*/
             Vector<Turma> vetor = conTurma.retornar_turmas();
-            //Mecher aqui pra arrumar (Urgent e)
+            //Define como os componentes desse panel devem ser organizados
             panelCards.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20));
 
+             /*Pega todos os nomes guarda na variavel nomesUnicos, mas sem incluir repetições */
             Set<String> nomesUnicos = new HashSet<>();
 
+              /*Repitição para adicionar todos os cards necessários */
             for (int i = 0; i < vetor.size(); i++) {
+                
+                /*Sleciona a turma que vai ter as informações coletadas e guarda na variavel t*/
                 Turma t = vetor.get(i);
 
+                 /*Verifica se o nome da turma ainda não está no conjunto nomesUnicos. Se for um nome novo, adiciona ao conjunto.*/
                 if (!nomesUnicos.contains(t.getNOME_Turma())) {
+                     /*Cria o card de turma de uma turma que ainda não tem seu card */
                     nomesUnicos.add(t.getNOME_Turma());
-
                     JCardTurma card = new JCardTurma(t.getNOME_Turma(), t.getCURSO_Turma(), t.getID_Turma());
+                    
+                    /*Adiciona o card criado na lista*/
                     panelCards.add(card);
                 }
             }
 
+            /*Caso alguma turma tenha sdio excluida, ela é removida e a interface é atualizada*/
             panelCards.revalidate();
             panelCards.repaint();
         } catch (Exception ex) {
+            /*Mensagem de erro*/
             JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
         }
 

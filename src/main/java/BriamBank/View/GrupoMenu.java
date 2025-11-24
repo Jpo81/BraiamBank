@@ -25,43 +25,54 @@ import javax.swing.JOptionPane;
  */
 public class GrupoMenu extends javax.swing.JFrame {
 
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GrupoMenu.class.getName());
+    private static final java.util.logging.Logger logger =
+            java.util.logging.Logger.getLogger(GrupoMenu.class.getName());
 
-    private String NomeTurma;
+    private String NomeTurma; // Guarda o nome da turma selecionada
 
-    /**
-     * Creates new form Turmas
-     */
+    // Construtor padrão (quando nenhuma turma é passada)
     public GrupoMenu() {
+
+        // Se não houver professor logado, impede o acesso e fecha o programa
         if (Session.getInstancia().getProfessorLogado() == null) {
-            JOptionPane.showMessageDialog(rootPane, "Não é possivel acessar essa tela sem realizar o login, o programa será encerrado por segurança");
+            JOptionPane.showMessageDialog(rootPane,
+                    "Não é possivel acessar essa tela sem realizar o login, o programa será encerrado por segurança");
             System.exit(0);
         }
+
+        // Define o ícone da janela
         ImageIcon icon = new ImageIcon(BrianBank.class.getResource("/assets/icons/bblogo.png"));
         setIconImage(icon.getImage());
 
-        initComponents();
+        initComponents(); // Inicializa os componentes gráficos
     }
 
+    // Construtor quando o nome de uma turma é passado
     public GrupoMenu(String NomeTurma) {
+
+        // Mesma verificação para impedir acesso sem login
         if (Session.getInstancia().getProfessorLogado() == null) {
             JOptionPane.showMessageDialog(rootPane,
                     "Não é possível acessar essa tela sem realizar o login, o programa será encerrado por segurança");
             System.exit(0);
         }
 
-        this.NomeTurma = NomeTurma;
+        this.NomeTurma = NomeTurma; // Armazena a turma selecionada
 
+        // Define o ícone da janela
         ImageIcon icon = new ImageIcon(BrianBank.class.getResource("/assets/icons/bblogo.png"));
         setIconImage(icon.getImage());
 
-        initComponents();
+        initComponents(); // Inicializa os componentes
 
+        // Busca todas as turmas cadastradas no banco
         ConTurma conTurma = new ConTurma();
-        Vector<Turma> vetor = conTurma.retornar_turmas();
+        Vector<Turma> vetor = conTurma.RetornaTurmaCompleta(NomeTurma);
 
+        // Define o layout para os cards serem empilhados verticalmente
         panelCards.setLayout(new BoxLayout(panelCards, BoxLayout.Y_AXIS));
 
+        // Para cada turma encontrada, cria um card visual e adiciona ao painel
         for (int i = 0; i < vetor.size(); i++) {
             Turma t = vetor.get(i);
 
@@ -72,12 +83,12 @@ public class GrupoMenu extends javax.swing.JFrame {
                     t.getGRUPO_Turma()
             );
 
-            panelCards.add(card);
+            panelCards.add(card); // Adiciona o card na lista
         }
 
+        // Atualiza o painel de cards após inserir tudo
         panelCards.revalidate();
         panelCards.repaint();
-
     }
 
     /**
@@ -160,44 +171,48 @@ public class GrupoMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {
+         try {
             ConTurma conTurma = new ConTurma();
+
+            // Mostra no console o nome da turma (provavelmente debug apenas)
             System.out.println("NomeTurma");
+
+            // Busca todas as turmas com esse nome
             Vector<Turma> vetor = conTurma.RetornaTurmaCompleta(NomeTurma);
 
+            // Exclui cada turma retornada
             for (int i = 0; i < vetor.size(); i++) {
                 Turma t = vetor.get(i);
-                conTurma.excluir(t.getID_Turma());
-
+                conTurma.excluir(t.getID_Turma()); // Exclui pelo ID
             }
+
+            // Após excluir, volta para a tela de MenuTurma
             MenuTurma novaTela = new MenuTurma();
             novaTela.setVisible(true);
-            this.dispose();
+            this.dispose(); // Fecha a tela atual
+
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
         }
+    
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
      */
+    // Método main para iniciar a aplicação com tema FlatLaf
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+
         try {
-            // Configura FlatLaf estilo macOS claro
+            // Deixa o visual igual ao do macOS claro
             FlatMacLightLaf.setup();
         } catch (Exception ex) {
             java.util.logging.Logger.getLogger(GrupoMenu.class.getName())
-                    .log(java.util.logging.Level.SEVERE, "Falha ao inicializar FlatLaf", ex);
+                    .log(java.util.logging.Level.SEVERE,
+                            "Falha ao inicializar FlatLaf", ex);
         }
-        //</editor-fold>
-        //</editor-fold>
 
-        /* Create and display the form */
+        // Cria e mostra a tela
         java.awt.EventQueue.invokeLater(() -> new GrupoMenu().setVisible(true));
     }
 

@@ -429,6 +429,7 @@ public class CadTurma extends javax.swing.JFrame {
     private void VoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VoltarActionPerformed
         try {
             MenuCad novaTela = new MenuCad();
+            novaTela.setLocationRelativeTo(null);
             novaTela.setVisible(true);
             this.dispose();
         } catch (Exception ex) {

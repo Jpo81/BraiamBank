@@ -215,6 +215,7 @@ public class AlunoList extends javax.swing.JFrame {
             
             //Abre a tela de GrupoMenu
             GrupoMenu grupoMenu = new GrupoMenu(turma.getNOME_Turma());
+            grupoMenu.setLocationRelativeTo(null);
             grupoMenu.setVisible(true);
             
             /*Fecha a tela atual*/

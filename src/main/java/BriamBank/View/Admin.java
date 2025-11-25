@@ -340,6 +340,7 @@ public class Admin extends javax.swing.JFrame {
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
         try {
             Login novaTela = new Login();
+            novaTela.setLocationRelativeTo(null);
             novaTela.setVisible(true);
             this.dispose();
         } catch (Exception ex) {

@@ -75,6 +75,7 @@ public class JCardGrupo extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 AlunoList alunoList = new AlunoList(CodTurma);
+                alunoList.setLocationRelativeTo(null);
                 alunoList.setVisible(true);
 
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(JCardGrupo.this);

@@ -203,6 +203,7 @@ public class Login extends javax.swing.JFrame {
                         "Login realizado com sucesso! Bem-vindo(a): " + prof.getNome_Professor());
                 /*Chama atela MenuTurma*/
                 MenuTurma novaTela = new MenuTurma();
+                novaTela.setLocationRelativeTo(null);
                 novaTela.setVisible(true);
                 /*Apaga tela atual*/
                 this.dispose();
@@ -221,6 +222,7 @@ public class Login extends javax.swing.JFrame {
         try {
             /*Chama a tela CadastroProfessor*/
             CadastroProfessor novaTela = new CadastroProfessor();
+            novaTela.setLocationRelativeTo(null);
             novaTela.setVisible(true);
             /*Apaga a tela atual*/
             this.dispose();

@@ -602,6 +602,7 @@ public class CadAluno extends javax.swing.JFrame {
         try {
         // Cria nova instância da tela MenuCad e exibe para o usuário
         MenuCad novaTela = new MenuCad();
+        novaTela.setLocationRelativeTo(null);
         novaTela.setVisible(true);
 
         // Fecha a tela atual

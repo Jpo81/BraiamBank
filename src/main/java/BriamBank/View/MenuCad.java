@@ -97,6 +97,7 @@ public class MenuCad extends javax.swing.JFrame {
         try {
             /*Chama a tela  CadTurma*/
             CadTurma cadTurma = new CadTurma();
+            cadTurma.setLocationRelativeTo(null);
             cadTurma.setVisible(true);
             /*Apaga a tela atual*/
             this.dispose();
@@ -110,6 +111,7 @@ public class MenuCad extends javax.swing.JFrame {
         try {
             /*Chama a tela CadAluno*/
             CadAluno cadAluno = new CadAluno();
+            cadAluno.setLocationRelativeTo(null);
             cadAluno.setVisible(true);
             /*Apaga a tela atual*/
             this.dispose();

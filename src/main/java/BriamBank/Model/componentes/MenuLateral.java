@@ -51,6 +51,7 @@ public class MenuLateral extends JPanel {
             try {
 
                 MenuTurma menuTurma = new MenuTurma();
+                menuTurma.setLocationRelativeTo(null);
                 menuTurma.setVisible(true);
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
                 frame.dispose();
@@ -64,6 +65,7 @@ public class MenuLateral extends JPanel {
         btnPontos = criarBotao("Pontos", "/assets/icons/carteira.png", e -> {
             try {
                 MudarPontos mudarPontos = new MudarPontos();
+                mudarPontos.setLocationRelativeTo(null);
                 mudarPontos.setVisible(true);
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
                 frame.dispose();
@@ -80,6 +82,7 @@ public class MenuLateral extends JPanel {
         btnJustificativas = criarBotao("Justificativas", "/assets/icons/menu.png", e -> {
             try {
                 JustCad justCad = new JustCad();
+                justCad.setLocationRelativeTo(null);
                 justCad.setVisible(true);
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
                 frame.dispose();
@@ -92,6 +95,7 @@ public class MenuLateral extends JPanel {
         btnRelatorio = criarBotao("Relatório", "/assets/icons/doc.png", e -> {
             try {
                 RelatorioGerar relatorioGerar = new RelatorioGerar();
+                relatorioGerar.setLocationRelativeTo(null);
                 relatorioGerar.setVisible(true);
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
                 frame.dispose();
@@ -104,6 +108,7 @@ public class MenuLateral extends JPanel {
         btnCadastrar = criarBotao("Gerenciar", "/assets/icons/mais.png", e -> {
             try {
                 MenuCad cadMenu = new MenuCad();
+                cadMenu.setLocationRelativeTo(null);
                 cadMenu.setVisible(true);
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
                 frame.dispose();
@@ -127,6 +132,7 @@ public class MenuLateral extends JPanel {
                 try {
                 Session.getInstancia().limparSessao();
                 Login login = new Login();
+                login.setLocationRelativeTo(null);
                 login.setVisible(true);
                 JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
                 frame.dispose();

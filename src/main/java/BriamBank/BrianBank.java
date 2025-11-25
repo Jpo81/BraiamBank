@@ -26,9 +26,10 @@ public class BrianBank {
 
             // Seta o ícone no JFrame
             novaTela.setIconImage(icon.getImage());
+            novaTela.setLocationRelativeTo(null);
             novaTela.setVisible(true);
         } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(Teste.class.getName())
+            java.util.logging.Logger.getLogger(BrianBank.class.getName())
                     .log(java.util.logging.Level.SEVERE, "Falha ao inicializar FlatLaf", ex);
         }
 

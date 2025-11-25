@@ -172,24 +172,31 @@ public class GrupoMenu extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
          try {
-            ConTurma conTurma = new ConTurma();
+             
+            int op = JOptionPane.showConfirmDialog(rootPane, "Deseja realmente excluir as turmas ?", "Confirmar", JOptionPane.YES_NO_OPTION);
+            
+            if (op == JOptionPane.YES_OPTION) {
+                ConTurma conTurma = new ConTurma();
 
-            // Mostra no console o nome da turma (provavelmente debug apenas)
-            System.out.println("NomeTurma");
+                // Mostra no console o nome da turma (provavelmente debug apenas)
+                System.out.println("NomeTurma");
 
-            // Busca todas as turmas com esse nome
-            Vector<Turma> vetor = conTurma.RetornaTurmaCompleta(NomeTurma);
+                // Busca todas as turmas com esse nome
+                Vector<Turma> vetor = conTurma.RetornaTurmaCompleta(NomeTurma);
 
-            // Exclui cada turma retornada
-            for (int i = 0; i < vetor.size(); i++) {
-                Turma t = vetor.get(i);
-                conTurma.excluir(t.getID_Turma()); // Exclui pelo ID
+                // Exclui cada turma retornada
+                for (int i = 0; i < vetor.size(); i++) {
+                    Turma t = vetor.get(i);
+                    conTurma.excluir(t.getID_Turma()); // Exclui pelo ID
+                }
+
+                // Após excluir, volta para a tela de MenuTurma
+                MenuTurma novaTela = new MenuTurma();
+                novaTela.setVisible(true);
+                this.dispose(); // Fecha a tela atual
             }
-
-            // Após excluir, volta para a tela de MenuTurma
-            MenuTurma novaTela = new MenuTurma();
-            novaTela.setVisible(true);
-            this.dispose(); // Fecha a tela atual
+            
+            
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);

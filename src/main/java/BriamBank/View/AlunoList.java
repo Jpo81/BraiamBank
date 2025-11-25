@@ -227,17 +227,24 @@ public class AlunoList extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
-            ConTurma conTurma = new ConTurma();
             
-            /*Exclui o grupo no banco de dados*/
-            conTurma.excluir(CodTurma);
+            int op = JOptionPane.showConfirmDialog(rootPane, "Deseja realmente excluir o grupo", "Confirmar", JOptionPane.YES_NO_OPTION);
             
-            /*abre a tela principal de turmas*/
-            MenuTurma novaTela = new MenuTurma();
-            novaTela.setVisible(true);
+            if (op == JOptionPane.YES_OPTION) {
+                ConTurma conTurma = new ConTurma();
+
+                /*Exclui o grupo no banco de dados*/
+                conTurma.excluir(CodTurma);
+
+                /*abre a tela principal de turmas*/
+                MenuTurma novaTela = new MenuTurma();
+                novaTela.setVisible(true);
+
+                /*Fecha a tela atual*/
+                this.dispose();
+            }
             
-            /*Fecha a tela atual*/
-            this.dispose();
+            
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(rootPane, "Ocorreu um erro: " + ex);
         }
